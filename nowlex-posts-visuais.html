@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nowlex — Posts Visuais Instagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --blue: #006bf9;
+  --blue-dim: rgba(0,107,249,0.15);
+  --black: #1a1a1a;
+  --white: #f2f2f2;
+  --mid: #888;
+  --border: rgba(0,107,249,0.14);
+}
+
+body {
+  font-family: 'Inter Tight', sans-serif;
+  background: #111;
+  color: var(--white);
+  min-height: 100vh;
+}
+
+/* ── CHROME ── */
+header {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(17,17,17,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 0 32px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { font-size: 17px; font-weight: 800; color: var(--blue); letter-spacing: -0.3px; }
+.logo span { color: var(--white); }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.tag-filter {
+  display: flex; gap: 6px;
+}
+.tf {
+  font-size: 11px; font-weight: 600; padding: 4px 12px;
+  border-radius: 20px; border: 1px solid rgba(255,255,255,0.12);
+  background: transparent; color: rgba(255,255,255,0.45);
+  cursor: pointer; font-family: 'Inter Tight', sans-serif;
+  transition: all .15s;
+}
+.tf.on, .tf:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* ── LAYOUT ── */
+main {
+  max-width: 860px; margin: 0 auto;
+  padding: 40px 24px 80px;
+  display: flex; flex-direction: column; gap: 56px;
+}
+
+/* ── POST WRAPPER ── */
+.post-wrap { display: flex; flex-direction: column; gap: 0; }
+
+.post-meta {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.pm-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--blue); font-weight: 500; letter-spacing: 1px;
+}
+.pm-fmt {
+  font-size: 10px; font-weight: 700; padding: 2px 9px;
+  border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.fmt-c { background: rgba(0,107,249,0.18); color: #7db5ff; }
+.fmt-r { background: rgba(255,255,255,0.08); color: #ccc; }
+.fmt-s { background: rgba(0,200,255,0.12); color: #5bd; }
+.fmt-i { background: rgba(80,220,120,0.12); color: #6d9; }
+.pm-date { font-size: 11px; color: var(--mid); margin-left: auto; }
+.pm-boost {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  background: #fff3cd; color: #7a5700; border-radius: 3px;
+}
+
+/* ── CARD STAGE (1:1 proportion) ── */
+.card-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* slides container */
+.slides {
+  display: flex;
+  width: 100%; height: 100%;
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.slide {
+  flex: 0 0 100%;
+  width: 100%; height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* ── SLIDE THEMES ── */
+.theme-dark { background: var(--black); }
+.theme-blue { background: var(--blue); }
+.theme-light { background: var(--white); }
+.theme-split {
+  background: linear-gradient(135deg, var(--black) 55%, var(--blue) 55%);
+}
+.theme-grid {
+  background: var(--black);
+}
+.theme-grid::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,107,249,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,107,249,0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* decorative accent blob */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+.blob-blue { background: rgba(0,107,249,0.35); }
+.blob-white { background: rgba(242,242,242,0.08); }
+
+/* ── SLIDE CONTENT ── */
+.slide-inner {
+  position: relative; z-index: 2;
+  padding: 36px 40px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+
+.slide-eyebrow {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 16px;
+  font-family: 'DM Mono', monospace;
+}
+.theme-blue .slide-eyebrow { color: rgba(255,255,255,0.7); }
+.theme-light .slide-eyebrow { color: var(--blue); }
+
+.slide-number {
+  font-size: 11px; font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: auto;
+}
+.theme-light .slide-number { color: rgba(26,26,26,0.2); }
+
+.slide-headline {
+  font-size: clamp(28px, 5.5vw, 48px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.theme-light .slide-headline { color: var(--black); }
+.theme-blue .slide-headline { color: #fff; }
+
+.slide-headline em {
+  font-style: normal;
+  color: var(--blue);
+}
+.theme-blue .slide-headline em { color: rgba(255,255,255,0.75); }
+.theme-light .slide-headline em { color: var(--blue); }
+
+.slide-body {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.65;
+  color: rgba(242,242,242,0.65);
+  max-width: 88%;
+  margin-bottom: 28px;
+}
+.theme-light .slide-body { color: rgba(26,26,26,0.6); }
+.theme-blue .slide-body { color: rgba(255,255,255,0.75); }
+
+.slide-stat {
+  font-size: clamp(56px, 11vw, 96px);
+  font-weight: 900;
+  letter-spacing: -4px;
+  line-height: 1;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+.theme-blue .slide-stat { color: #fff; }
+.slide-stat-label {
+  font-size: 14px; font-weight: 500;
+  color: rgba(242,242,242,0.5);
+  letter-spacing: 0.5px;
+}
+.theme-blue .slide-stat-label { color: rgba(255,255,255,0.65); }
+.theme-light .slide-stat-label { color: rgba(26,26,26,0.5); }
+
+/* checklist */
+.checklist { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+.check-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 14px; font-weight: 500;
+  color: rgba(242,242,242,0.85);
+  line-height: 1.4;
+}
+.theme-light .check-item { color: rgba(26,26,26,0.85); }
+.check-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+  font-size: 10px; color: white; font-weight: 700;
+}
+
+/* tag chips */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.chip {
+  font-size: 11px; font-weight: 600; padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,107,249,0.3);
+  color: rgba(0,107,249,0.9);
+  background: rgba(0,107,249,0.08);
+}
+.theme-blue .chip { border-color: rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.1); }
+.theme-dark .chip { border-color: rgba(0,107,249,0.3); color: #7db5ff; }
+
+/* poll */
+.poll { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.poll-opt {
+  padding: 12px 18px; border-radius: 8px;
+  border: 1px solid rgba(0,107,249,0.25);
+  font-size: 13px; font-weight: 600;
+  color: rgba(242,242,242,0.8);
+  background: rgba(0,107,249,0.06);
+  display: flex; align-items: center; gap: 10px;
+}
+.poll-opt::before {
+  content: ''; width: 14px; height: 14px;
+  border-radius: 50%; border: 2px solid var(--blue);
+  flex-shrink: 0;
+}
+
+/* divider line */
+.rule {
+  width: 32px; height: 3px; background: var(--blue);
+  border-radius: 2px; margin-bottom: 20px;
+}
+.theme-blue .rule { background: rgba(255,255,255,0.5); }
+.theme-light .rule { background: var(--blue); }
+
+/* logo watermark */
+.slide-logo {
+  margin-top: auto;
+  font-size: 12px; font-weight: 800;
+  color: rgba(242,242,242,0.2);
+  letter-spacing: -0.3px;
+}
+.theme-light .slide-logo { color: rgba(26,26,26,0.2); }
+.theme-blue .slide-logo { color: rgba(255,255,255,0.3); }
+.slide-logo span { color: var(--blue); }
+.theme-blue .slide-logo span { color: rgba(255,255,255,0.55); }
+
+/* split layout for comparisons */
+.split-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-bottom: 20px;
+}
+.split-col { display: flex; flex-direction: column; gap: 8px; }
+.split-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--mid);
+}
+.split-val {
+  font-size: clamp(30px, 6vw, 52px); font-weight: 900;
+  letter-spacing: -2px; line-height: 1;
+}
+.val-red { color: #ff5555; }
+.val-blue { color: var(--blue); }
+.split-desc { font-size: 12px; color: rgba(242,242,242,0.45); line-height: 1.4; }
+
+/* CTA slide */
+.cta-url {
+  font-size: 13px; font-weight: 700;
+  color: var(--blue); letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+.theme-blue .cta-url { color: rgba(255,255,255,0.9); }
+
+/* story format (9:16 feel inside 1:1) */
+.story-inner {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; height: 100%;
+  padding: 40px 36px;
+  gap: 20px;
+}
+.story-q {
+  font-size: clamp(22px, 4.5vw, 36px);
+  font-weight: 800; line-height: 1.15;
+  letter-spacing: -1px; color: var(--white);
+  max-width: 380px;
+}
+.theme-blue .story-q { color: #fff; }
+.theme-light .story-q { color: var(--black); }
+
+/* ── CAROUSEL CONTROLS ── */
+.carousel-nav {
+  position: absolute; bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px;
+  z-index: 10;
+}
+.dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transition: all .2s; cursor: pointer;
+}
+.dot.active { background: #fff; width: 18px; border-radius: 3px; }
+
+.arr {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15);
+  color: white; font-size: 14px; cursor: pointer; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; backdrop-filter: blur(8px);
+}
+.arr:hover { background: var(--blue); border-color: var(--blue); }
+.arr-l { left: 12px; }
+.arr-r { right: 12px; }
+.arr.hidden { opacity: 0; pointer-events: none; }
+
+/* ── CAPTION AREA ── */
+.caption-area {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding: 16px 20px;
+}
+.caption-text {
+  font-size: 13px; line-height: 1.7;
+  color: rgba(242,242,242,0.6);
+  white-space: pre-line;
+}
+.caption-tags {
+  margin-top: 10px;
+  font-size: 11px;
+  color: rgba(0,107,249,0.7);
+  font-family: 'DM Mono', monospace;
+  line-height: 1.8;
+}
+.caption-toggle {
+  background: none; border: none; cursor: pointer;
+  font-size: 11px; font-weight: 600; color: var(--blue);
+  font-family: 'Inter Tight', sans-serif;
+  margin-top: 8px; padding: 0; display: block;
+}
+
+/* ── DAY HEADER ── */
+.day-sep {
+  display: flex; align-items: center; gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 0;
+}
+.day-sep-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--blue); letter-spacing: 2px; text-transform: uppercase;
+}
+.day-sep-name { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: var(--white); }
+
+.posts-day { display: flex; flex-direction: column; gap: 32px; }
+
+@media (min-width: 600px) {
+  .posts-day { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">now<span>lex</span>.ai</div>
+  <div class="header-right">
+    <div class="tag-filter">
+      <button class="tf on" onclick="filter('all',this)">Todos</button>
+      <button class="tf" onclick="filter('turb',this)">🚀 Turbinar</button>
+      <button class="tf" onclick="filter('carrossel',this)">Carrossel</button>
+      <button class="tf" onclick="filter('reels',this)">Reels</button>
+      <button class="tf" onclick="filter('story',this)">Story</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════════ -->
+<!-- TERÇA 09/06 -->
+<!-- ══════════════════════════════════ -->
+<div class="day-block">
+  <div class="day-sep">
+    <div class="day-sep-date">09 JUN · TER</div>
+    <div class="day-sep-name">Terça-feira</div>
+  </div>
+  <div class="posts-day">
+
+    <!-- POST 001 — REELS / TURB -->
+    <div class="post-wrap" data-fmt="reels" data-boost="sim">
+      <div class="post-meta">
+        <span class="pm-num">#001</span>
+        <span class="pm-fmt fmt-r">Reels</span>
+        <span class="pm-boost">🚀 Turbinar</span>
+        <span class="pm-date">7h30</span>
+      </div>
+      <div class="card-stage" id="c001">
+        <div class="slides" id="s001">
+
+          <!-- slide único para reels: capa visual -->
+          <div class="slide theme-grid">
+            <div class="blob blob-blue" style="width:420px;height:420px;top:-80px;right:-100px;opacity:.5"></div>
+            <div class="slide-inner">
+              <div class="slide-eyebrow">nowlex.ai · lançamento</div>
+              <div style="flex:1"></div>
+              <div class="slide-stat" style="font-size:clamp(48px,9vw,80px);margin-bottom:12px;">80M</div>
+              <div class="slide-stat-label" style="margin-bottom:24px;">casos ativos no judiciário brasileiro</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="font-size:clamp(22px,4vw,36px);margin-bottom:12px;">
+                <em>Cada minuto</em> conta.<br>A Nowlex chegou.
+              </div>
+              <div class="slide-body" style="font-size:13px;margin-bottom:0;">
+                IA integrada ao PJe, eProc e PROJUDI.<br>Conformidade CNJ e LGPD desde o primeiro dia.
+              </div>
+              <div class="slide-logo" style="margin-top:24px;">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text" id="cap001" style="max-height:60px;overflow:hidden;">O Judiciário brasileiro processa mais de 80 milhões de casos ativos. Cada minuto conta.
+
+A Nowlex nasceu dentro das regras — integrada ao PJe, eProc e PROJUDI, com conformidade CNJ e LGPD desde o primeiro dia.
+
+Não é mais um software. É IA que entende o fluxo processual de dentro pra fora.
+
+👉 Conheça em nowlex.ai</div>
+        <button class="caption-toggle" onclick="toggleCap('cap001',this)">Ver legenda ↓</button>
+        <div class="caption-tags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #PJe</div>
+      </div>
+    </div>
+
+    <!-- POST 002 — STORY -->
+    <div class="post-wrap" data-fmt="story" data-boost="nao">
+      <div class="post-meta">
+        <span class="pm-num">#002</span>
+        <span class="pm-fmt fmt-s">Story</span>
+        <span class="pm-date">12h15</span>
+      </div>
+      <div class="card-stage" id="c002">
+        <div class="slides" id="s002">
+          <div class="slide theme-dark">
+            <div class="blob blob-blue" style="width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.2"></div>
+            <div class="slide-inner">
+              <div class="story-inner">
+                <div class="slide-eyebrow" style="margin-bottom:0">enquete · nowlex.ai</div>
+                <div class="story-q">Quanto tempo você gasta por dia classificando processos manualmente?</div>
+                <div class="poll">
+                  <div class="poll-opt">Menos de 1h</div>
+                  <div class="poll-opt">1h a 3h</div>
+                  <div class="poll-opt">Mais de 3h</div>
+                </div>
+                <div style="font-size:12px;color:rgba(242,242,242,0.35);">Responda e veja o que muda com IA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text">Poll de abertura — mapeia a dor do público e gera DM automático com link nowlex.ai para quem votar em "Mais de 3h".</div>
+        <div class="caption-tags">#nowlex #judiciário #servidorpúblico</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- QUARTA 10/06 -->
+<!-- ══════════════════════════════════ -->
+<div class="day-block">
+  <div class="day-sep">
+    <div class="day-sep-date">10 JUN · QUA</div>
+    <div class="day-sep-name">Quarta-feira</div>
+  </div>
+  <div class="posts-day">
+
+    <!-- POST 003 — CARROSSEL / TURB -->
+    <div class="post-wrap" data-fmt="carrossel" data-boost="sim">
+      <div class="post-meta">
+        <span class="pm-num">#003</span>
+        <span class="pm-fmt fmt-c">Carrossel</span>
+        <span class="pm-boost">🚀 Turbinar</span>
+        <span class="pm-date">7h30</span>
+      </div>
+      <div class="card-stage" id="c003">
+        <button class="arr arr-l hidden" id="al003" onclick="move('003',-1)">‹</button>
+        <button class="arr arr-r" id="ar003" onclick="move('003',1)">›</button>
+        <div class="slides" id="s003">
+
+          <!-- slide 1: capa -->
+          <div class="slide theme-dark">
+            <div class="blob blob-blue" style="width:380px;height:380px;top:-60px;right:-80px;opacity:.4"></div>
+            <div class="slide-inner">
+              <div class="slide-eyebrow">governança · conformidade</div>
+              <div class="slide-number">1 / 7</div>
+              <div class="slide-headline">5 pontos antes de<br>contratar <em>IA</em><br>para seu tribunal</div>
+              <div class="slide-body">Um checklist para gestores e diretores de TI do setor público.</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 2 -->
+          <div class="slide theme-grid">
+            <div class="slide-inner">
+              <div class="slide-eyebrow">ponto 01</div>
+              <div class="slide-number">2 / 7</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="font-size:clamp(24px,4.5vw,40px);">Conformidade <em>LGPD</em></div>
+              <div class="slide-body">A solução trata dados sensíveis dentro das normas da Lei 13.709/18? Logs de auditoria e RIPD são obrigatórios.</div>
+              <div class="chip" style="align-self:flex-start;margin-bottom:8px;">Lei 13.709/18</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 3 -->
+          <div class="slide theme-grid">
+            <div class="slide-inner">
+              <div class="slide-eyebrow">ponto 02</div>
+              <div class="slide-number">3 / 7</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="font-size:clamp(24px,4.5vw,40px);">Integração <em>nativa</em></div>
+              <div class="slide-body">Conecta com PJe, eProc ou PROJUDI sem middleware externo? Adaptações genéricas criam dívida técnica.</div>
+              <div class="chips">
+                <span class="chip">PJe</span>
+                <span class="chip">eProc</span>
+                <span class="chip">PROJUDI</span>
+              </div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 4 -->
+          <div class="slide theme-grid">
+            <div class="slide-inner">
+              <div class="slide-eyebrow">ponto 03</div>
+              <div class="slide-number">4 / 7</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="font-size:clamp(24px,4.5vw,40px);">Nuvem ou <em>on-premise?</em></div>
+              <div class="slide-body">O tribunal tem autonomia sobre onde os dados ficam? Soberania de dados é requisito, não opcional.</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 5 -->
+          <div class="slide theme-grid">
+            <div class="slide-inner">
+              <div class="slide-eyebrow">ponto 04</div>
+              <div class="slide-number">5 / 7</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="font-size:clamp(24px,4.5vw,40px);"><em>Auditabilidade</em> total</div>
+              <div class="slide-body">Cada decisão da IA é rastreável e explicável? IA caixa-preta é inviável no setor público.</div>
+              <div class="chip" style="align-self:flex-start;">Res. CNJ 332/2020</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 6 -->
+          <div class="slide theme-grid">
+            <div class="slide-inner">
+              <div class="slide-eyebrow">ponto 05</div>
+              <div class="slide-number">6 / 7</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="font-size:clamp(24px,4.5vw,40px);">Suporte à <em>licitação</em></div>
+              <div class="slide-body">O fornecedor tem documentação técnica e jurídica para processo licitatório público? Se não tem, é risco seu.</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 7: CTA -->
+          <div class="slide theme-blue">
+            <div class="blob blob-white" style="width:360px;height:360px;bottom:-80px;left:-80px;"></div>
+            <div class="slide-inner">
+              <div class="slide-eyebrow" style="color:rgba(255,255,255,0.6);">a Nowlex atende os 5</div>
+              <div class="slide-number" style="color:rgba(255,255,255,0.2);">7 / 7</div>
+              <div class="slide-headline" style="font-size:clamp(28px,5vw,46px);">Pronto para a próxima etapa?</div>
+              <div class="slide-body" style="color:rgba(255,255,255,0.75);">Agende uma demonstração técnica para o seu tribunal. Sem custo. Sem compromisso.</div>
+              <div class="cta-url">nowlex.ai</div>
+              <div class="slide-logo" style="margin-top:auto;">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="carousel-nav" id="nav003">
+          <div class="dot active" onclick="goTo('003',0)"></div>
+          <div class="dot" onclick="goTo('003',1)"></div>
+          <div class="dot" onclick="goTo('003',2)"></div>
+          <div class="dot" onclick="goTo('003',3)"></div>
+          <div class="dot" onclick="goTo('003',4)"></div>
+          <div class="dot" onclick="goTo('003',5)"></div>
+          <div class="dot" onclick="goTo('003',6)"></div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text" id="cap003" style="max-height:60px;overflow:hidden;">Adotar IA no judiciário sem verificar esses pontos é assinar um problema futuro.
+
+1 — Conformidade LGPD
+2 — Integração nativa (PJe / eProc / PROJUDI)
+3 — Nuvem ou On-Premise
+4 — Auditabilidade total (Res. CNJ 332/2020)
+5 — Suporte à licitação pública
+
+A Nowlex atende todos os 5. Salve e compartilhe com o gestor de TI do seu tribunal.</div>
+        <button class="caption-toggle" onclick="toggleCap('cap003',this)">Ver legenda ↓</button>
+        <div class="caption-tags">#nowlex #LGPD #CNJdigital #GovTechBrasil #IAnojudiciário #tribunaisdigitais #inovaçãopública</div>
+      </div>
+    </div>
+
+    <!-- POST 004 — STORY -->
+    <div class="post-wrap" data-fmt="story" data-boost="nao">
+      <div class="post-meta">
+        <span class="pm-num">#004</span>
+        <span class="pm-fmt fmt-s">Story</span>
+        <span class="pm-date">12h15</span>
+      </div>
+      <div class="card-stage" id="c004">
+        <div class="slides" id="s004">
+          <div class="slide theme-dark">
+            <div class="blob blob-blue" style="width:280px;height:280px;top:30%;right:-60px;opacity:.25"></div>
+            <div class="slide-inner">
+              <div class="story-inner">
+                <div class="slide-eyebrow" style="margin-bottom:0">quiz · sistemas processuais</div>
+                <div class="story-q">Qual sistema processual o seu tribunal usa?</div>
+                <div class="poll">
+                  <div class="poll-opt">PJe</div>
+                  <div class="poll-opt">eProc</div>
+                  <div class="poll-opt">PROJUDI</div>
+                  <div class="poll-opt">Outro</div>
+                </div>
+                <div style="font-size:12px;color:rgba(242,242,242,0.3);margin-top:4px;">A Nowlex integra com todos — nativamente.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text">Quiz de segmentação. Cada resposta direciona o seguidor para conteúdo específico do sistema que usa. Dado útil para anúncios futuros.</div>
+        <div class="caption-tags">#PJe #eProc #PROJUDI #nowlex</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- QUINTA 11/06 -->
+<!-- ══════════════════════════════════ -->
+<div class="day-block">
+  <div class="day-sep">
+    <div class="day-sep-date">11 JUN · QUI</div>
+    <div class="day-sep-name">Quinta-feira</div>
+  </div>
+  <div class="posts-day">
+
+    <!-- POST 005 — REELS ANTES/DEPOIS / TURB -->
+    <div class="post-wrap" data-fmt="reels" data-boost="sim">
+      <div class="post-meta">
+        <span class="pm-num">#005</span>
+        <span class="pm-fmt fmt-r">Reels</span>
+        <span class="pm-boost">🚀 Turbinar</span>
+        <span class="pm-date">7h30</span>
+      </div>
+      <div class="card-stage" id="c005">
+        <div class="slides" id="s005">
+          <div class="slide theme-dark">
+            <div class="slide-inner" style="padding:32px 36px;">
+              <div class="slide-eyebrow">antes vs depois · triagem processual</div>
+              <div style="flex:1;display:flex;align-items:center;">
+                <div class="split-row" style="width:100%;margin:0;">
+                  <div class="split-col">
+                    <div class="split-label">Sem IA</div>
+                    <div class="split-val val-red">4h</div>
+                    <div class="split-desc">Triagem manual de 200 processos por servidor por dia</div>
+                  </div>
+                  <div class="split-col">
+                    <div class="split-label" style="color:var(--blue);">Com Nowlex</div>
+                    <div class="split-val val-blue">47min</div>
+                    <div class="split-desc">Mesmo volume. IA classifica. Servidor revisa e confirma.</div>
+                  </div>
+                </div>
+              </div>
+              <div style="width:100%;height:1px;background:rgba(255,255,255,0.07);margin:20px 0;"></div>
+              <div class="slide-body" style="font-size:13px;margin-bottom:0;color:rgba(242,242,242,0.5);">
+                Isso não é promessa — é o que nossos clientes já operam.
+              </div>
+              <div class="slide-logo" style="margin-top:16px;">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text" id="cap005" style="max-height:60px;overflow:hidden;">Sem IA: servidor abre processo, lê, classifica, encaminha. Repete isso 200 vezes por dia.
+
+Com Nowlex: a IA lê, classifica e sugere encaminhamento em segundos. O servidor revisa e confirma.
+
+Mesmo volume. Menos de metade do tempo.
+
+Isso não é ficção científica — é o que nossos clientes já operam hoje.</div>
+        <button class="caption-toggle" onclick="toggleCap('cap005',this)">Ver legenda ↓</button>
+        <div class="caption-tags">#nowlex #IAnojudiciário #LegalTechBR #GovTechBrasil #processoeletronico</div>
+      </div>
+    </div>
+
+    <!-- POST 006 — STORY LINK -->
+    <div class="post-wrap" data-fmt="story" data-boost="nao">
+      <div class="post-meta">
+        <span class="pm-num">#006</span>
+        <span class="pm-fmt fmt-s">Story</span>
+        <span class="pm-date">12h15</span>
+      </div>
+      <div class="card-stage" id="c006">
+        <div class="slides" id="s006">
+          <div class="slide theme-blue">
+            <div class="blob blob-white" style="width:300px;height:300px;bottom:-60px;right:-60px;"></div>
+            <div class="slide-inner">
+              <div class="story-inner">
+                <div class="slide-eyebrow" style="color:rgba(255,255,255,0.6);margin-bottom:0;">documentação técnica</div>
+                <div class="story-q" style="color:#fff;">Quer entender como a Nowlex integra com o seu sistema processual?</div>
+                <div style="font-size:14px;color:rgba(255,255,255,0.75);font-weight:500;">Os detalhes técnicos estão na bio.</div>
+                <div style="font-size:28px;margin-top:4px;">☝️</div>
+                <div style="font-size:13px;font-weight:700;color:#fff;background:rgba(255,255,255,0.15);padding:10px 24px;border-radius:30px;">nowlex.ai →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text">Story de direcionamento para o site. Publicar após o Reels de antes/depois.</div>
+        <div class="caption-tags">#nowlex #PJe #eProc</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- SEXTA 12/06 -->
+<!-- ══════════════════════════════════ -->
+<div class="day-block">
+  <div class="day-sep">
+    <div class="day-sep-date">12 JUN · SEX</div>
+    <div class="day-sep-name">Sexta-feira</div>
+  </div>
+  <div class="posts-day">
+
+    <!-- POST 007 — IMAGEM TENDÊNCIA / TURB -->
+    <div class="post-wrap" data-fmt="imagem" data-boost="sim">
+      <div class="post-meta">
+        <span class="pm-num">#007</span>
+        <span class="pm-fmt fmt-i">Imagem</span>
+        <span class="pm-boost">🚀 Turbinar</span>
+        <span class="pm-date">7h30</span>
+      </div>
+      <div class="card-stage" id="c007">
+        <div class="slides" id="s007">
+          <div class="slide theme-dark">
+            <div class="blob blob-blue" style="width:500px;height:500px;top:-100px;left:-100px;opacity:.3"></div>
+            <div class="slide-inner" style="justify-content:center;text-align:left;">
+              <div class="slide-eyebrow">estratégia nacional · CNJ</div>
+              <div style="flex:1"></div>
+              <div class="slide-headline">O CNJ quer IA<br>em todos os<br>tribunais.</div>
+              <div style="height:3px;width:48px;background:var(--blue);border-radius:2px;margin:20px 0;"></div>
+              <div class="slide-headline" style="color:rgba(242,242,242,0.35);font-size:clamp(20px,3.5vw,32px);letter-spacing:-0.5px;">
+                Seu tribunal<br>está pronto?
+              </div>
+              <div style="flex:1"></div>
+              <div class="cta-url" style="font-size:14px;">nowlex.ai</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text" id="cap007" style="max-height:60px;overflow:hidden;">A estratégia nacional de transformação digital do CNJ aponta um caminho claro: IA como infraestrutura, não como experimento.
+
+Tribunais que começarem agora terão vantagem competitiva na corrida por eficiência e conformidade.
+
+Os que esperarem vão correr atrás.
+
+A Nowlex já está pronta para essa corrida. Integração nativa, conformidade CNJ, implantação rápida.
+
+Quando seu tribunal começa?</div>
+        <button class="caption-toggle" onclick="toggleCap('cap007',this)">Ver legenda ↓</button>
+        <div class="caption-tags">#nowlex #CNJdigital #GovTechBrasil #IAnojudiciário #transformacaodigital #inovaçãopública</div>
+      </div>
+    </div>
+
+    <!-- POST 008 — STORY CTA FIM DE SEMANA -->
+    <div class="post-wrap" data-fmt="story" data-boost="nao">
+      <div class="post-meta">
+        <span class="pm-num">#008</span>
+        <span class="pm-fmt fmt-s">Story</span>
+        <span class="pm-date">18h</span>
+      </div>
+      <div class="card-stage" id="c008">
+        <div class="slides" id="s008">
+          <div class="slide theme-blue">
+            <div class="blob blob-white" style="width:280px;height:280px;top:-40px;right:-40px;opacity:.15"></div>
+            <div class="slide-inner">
+              <div class="story-inner">
+                <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6);">encerramento de semana</div>
+                <div class="story-q" style="color:#fff;font-size:clamp(20px,4vw,30px);">Essa semana você viu o que a IA pode fazer pelo seu tribunal.</div>
+                <div style="font-size:15px;color:rgba(255,255,255,0.75);font-weight:500;line-height:1.5;">Na semana que vem, veja na prática.</div>
+                <div style="font-size:14px;font-weight:700;background:rgba(255,255,255,0.15);color:#fff;padding:12px 28px;border-radius:30px;margin-top:8px;">Agendar demonstração →</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.4);">nowlex.ai</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text">CTA de encerramento de semana. Publicar às 18h de sexta para capturar quem verifica o celular no final do expediente.</div>
+        <div class="caption-tags">#nowlex #IAnojudiciário</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- SÁBADO 13/06 -->
+<!-- ══════════════════════════════════ -->
+<div class="day-block">
+  <div class="day-sep">
+    <div class="day-sep-date">13 JUN · SÁB</div>
+    <div class="day-sep-name">Sábado</div>
+  </div>
+  <div class="posts-day" style="grid-template-columns:1fr;">
+
+    <!-- POST 009 — CARROSSEL EDUCATIVO -->
+    <div class="post-wrap" data-fmt="carrossel" data-boost="nao" style="max-width:420px;">
+      <div class="post-meta">
+        <span class="pm-num">#009</span>
+        <span class="pm-fmt fmt-c">Carrossel</span>
+        <span class="pm-date">10h</span>
+      </div>
+      <div class="card-stage" id="c009">
+        <button class="arr arr-l hidden" id="al009" onclick="move('009',-1)">‹</button>
+        <button class="arr arr-r" id="ar009" onclick="move('009',1)">›</button>
+        <div class="slides" id="s009">
+
+          <!-- slide 1: capa -->
+          <div class="slide theme-light">
+            <div class="slide-inner">
+              <div class="slide-eyebrow" style="color:var(--blue);">infraestrutura · decisão técnica</div>
+              <div class="slide-number" style="color:rgba(26,26,26,0.15);">1 / 5</div>
+              <div class="slide-headline" style="color:var(--black);">Nuvem ou<br><em>On-Premise?</em><br>O guia para<br>tribunais.</div>
+              <div class="slide-logo" style="color:rgba(26,26,26,0.18);margin-top:auto;">now<span style="color:var(--blue);">lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 2: nuvem -->
+          <div class="slide theme-light">
+            <div class="slide-inner">
+              <div class="slide-eyebrow">opção A</div>
+              <div class="slide-number" style="color:rgba(26,26,26,0.15);">2 / 5</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="color:var(--black);font-size:clamp(26px,5vw,42px);">☁️ Nuvem</div>
+              <div class="checklist">
+                <div class="check-item" style="color:rgba(26,26,26,0.8);">
+                  <div class="check-dot">✓</div>Implantação rápida — dias, não meses
+                </div>
+                <div class="check-item" style="color:rgba(26,26,26,0.8);">
+                  <div class="check-dot">✓</div>Atualizações automáticas e contínuas
+                </div>
+                <div class="check-item" style="color:rgba(26,26,26,0.8);">
+                  <div class="check-dot">✓</div>Custo previsível — assinatura mensal
+                </div>
+              </div>
+              <div class="slide-logo" style="color:rgba(26,26,26,0.18);">now<span style="color:var(--blue);">lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 3: on-premise -->
+          <div class="slide theme-light">
+            <div class="slide-inner">
+              <div class="slide-eyebrow">opção B</div>
+              <div class="slide-number" style="color:rgba(26,26,26,0.15);">3 / 5</div>
+              <div class="rule"></div>
+              <div class="slide-headline" style="color:var(--black);font-size:clamp(26px,5vw,42px);">🖥️ On-Premise</div>
+              <div class="checklist">
+                <div class="check-item" style="color:rgba(26,26,26,0.8);">
+                  <div class="check-dot">✓</div>Dados dentro da infraestrutura do tribunal
+                </div>
+                <div class="check-item" style="color:rgba(26,26,26,0.8);">
+                  <div class="check-dot">✓</div>Controle total sobre atualizações
+                </div>
+                <div class="check-item" style="color:rgba(26,26,26,0.8);">
+                  <div class="check-dot">✓</div>Customização profunda de parâmetros
+                </div>
+              </div>
+              <div class="slide-logo" style="color:rgba(26,26,26,0.18);">now<span style="color:var(--blue);">lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 4: híbrido -->
+          <div class="slide theme-dark">
+            <div class="blob blob-blue" style="width:300px;height:300px;bottom:-60px;right:-60px;opacity:.3"></div>
+            <div class="slide-inner">
+              <div class="slide-eyebrow">opção C · recomendada</div>
+              <div class="slide-number">4 / 5</div>
+              <div class="rule"></div>
+              <div class="slide-headline">⚡ <em>Híbrido</em></div>
+              <div class="slide-body">O melhor dos dois mundos — e a opção que mais cresce nos tribunais. Processamento na nuvem, dados sensíveis no tribunal.</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+          <!-- slide 5: CTA -->
+          <div class="slide theme-blue">
+            <div class="slide-inner">
+              <div class="slide-eyebrow" style="color:rgba(255,255,255,0.6);">a Nowlex suporta os três</div>
+              <div class="slide-number" style="color:rgba(255,255,255,0.2);">5 / 5</div>
+              <div class="slide-headline" style="font-size:clamp(24px,4.5vw,40px);">A decisão é<br>sua. A IA<br>é nossa.</div>
+              <div class="cta-url">nowlex.ai</div>
+              <div class="slide-logo">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="carousel-nav" id="nav009">
+          <div class="dot active" onclick="goTo('009',0)"></div>
+          <div class="dot" onclick="goTo('009',1)"></div>
+          <div class="dot" onclick="goTo('009',2)"></div>
+          <div class="dot" onclick="goTo('009',3)"></div>
+          <div class="dot" onclick="goTo('009',4)"></div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text" id="cap009" style="max-height:60px;overflow:hidden;">A maior dúvida dos gestores de TI dos tribunais quando o assunto é IA.
+
+Não existe resposta única — existe o que faz sentido para o perfil do seu tribunal.
+
+☁️ Nuvem: rápido, contínuo, custo previsível.
+🖥️ On-Premise: soberania total dos dados.
+⚡ Híbrido: o melhor dos dois — e o mais adotado.
+
+A Nowlex suporta os três modelos. Salve para compartilhar com o time de TI.</div>
+        <button class="caption-toggle" onclick="toggleCap('cap009',this)">Ver legenda ↓</button>
+        <div class="caption-tags">#nowlex #GovTechBrasil #LGPD #tribunaisdigitais #inovaçãopública #setorpúblico</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ -->
+<!-- SEGUNDA 16/06 -->
+<!-- ══════════════════════════════════ -->
+<div class="day-block">
+  <div class="day-sep">
+    <div class="day-sep-date">16 JUN · SEG</div>
+    <div class="day-sep-name">Segunda-feira</div>
+  </div>
+  <div class="posts-day">
+
+    <!-- POST 010 — IMAGEM DADO / TURB -->
+    <div class="post-wrap" data-fmt="imagem" data-boost="sim">
+      <div class="post-meta">
+        <span class="pm-num">#010</span>
+        <span class="pm-fmt fmt-i">Imagem</span>
+        <span class="pm-boost">🚀 Turbinar</span>
+        <span class="pm-date">7h30</span>
+      </div>
+      <div class="card-stage" id="c010">
+        <div class="slides" id="s010">
+          <div class="slide theme-dark">
+            <div class="blob blob-blue" style="width:440px;height:440px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.18"></div>
+            <div class="slide-inner" style="align-items:center;text-align:center;justify-content:center;">
+              <div class="slide-eyebrow" style="text-align:center;">dado de impacto · triagem processual</div>
+              <div class="slide-stat">60<span style="font-size:.55em;color:rgba(242,242,242,0.4);">%</span></div>
+              <div style="font-size:16px;font-weight:600;color:rgba(242,242,242,0.55);letter-spacing:0.5px;margin-bottom:32px;line-height:1.5;">
+                de redução no tempo de<br>triagem processual com IA
+              </div>
+              <div style="width:40px;height:2px;background:rgba(0,107,249,0.4);margin:0 auto 28px;"></div>
+              <div style="font-size:13px;color:rgba(242,242,242,0.35);max-width:240px;line-height:1.6;">
+                Integrado ao PJe e eProc. Com rastreabilidade total de cada decisão.
+              </div>
+              <div class="slide-logo" style="margin-top:32px;text-align:center;">now<span>lex</span>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text" id="cap010" style="max-height:60px;overflow:hidden;">Classificar processos manualmente é uma das tarefas mais repetitivas e demoradas do fluxo judicial.
+
+Com IA integrada ao PJe e eProc, servidores relatam redução de até 60% no tempo dedicado à triagem — sem perda de qualidade e com rastreabilidade total de cada decisão.
+
+Isso não é uma promessa. É o que já acontece nos tribunais que operam com Nowlex.
+
+Menos triagem manual. Mais tempo para o que importa.</div>
+        <button class="caption-toggle" onclick="toggleCap('cap010',this)">Ver legenda ↓</button>
+        <div class="caption-tags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #PJe #processoeletronico</div>
+      </div>
+    </div>
+
+    <!-- POST 011 — STORY POLL GARGALO -->
+    <div class="post-wrap" data-fmt="story" data-boost="nao">
+      <div class="post-meta">
+        <span class="pm-num">#011</span>
+        <span class="pm-fmt fmt-s">Story</span>
+        <span class="pm-date">12h15</span>
+      </div>
+      <div class="card-stage" id="c011">
+        <div class="slides" id="s011">
+          <div class="slide theme-dark">
+            <div class="blob blob-blue" style="width:260px;height:260px;top:20%;left:-60px;opacity:.2"></div>
+            <div class="slide-inner">
+              <div class="story-inner">
+                <div class="slide-eyebrow" style="margin-bottom:0;">pesquisa · gargalos</div>
+                <div class="story-q">Qual é o maior gargalo do seu tribunal hoje?</div>
+                <div class="poll">
+                  <div class="poll-opt">Triagem de processos</div>
+                  <div class="poll-opt">Elaboração de despachos</div>
+                  <div class="poll-opt">Pesquisa jurisprudencial</div>
+                  <div class="poll-opt">Gestão de prazos</div>
+                </div>
+                <div style="font-size:11px;color:rgba(242,242,242,0.28);margin-top:4px;">A Nowlex atua em todos esses pontos.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption-area">
+        <div class="caption-text">Poll estratégico — mapeia objeções e dores prioritárias para personalizar conteúdo das próximas semanas.</div>
+        <div class="caption-tags">#nowlex #judiciário #servidorpúblico</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<script>
+// ── carousel state ──
+const state = {};
+
+function initCarousel(id) {
+  if (!state[id]) state[id] = { cur: 0 };
+}
+
+function move(id, dir) {
+  initCarousel(id);
+  const slides = document.getElementById('s' + id);
+  const total = slides.children.length;
+  state[id].cur = Math.max(0, Math.min(total - 1, state[id].cur + dir));
+  render(id, total);
+}
+
+function goTo(id, idx) {
+  initCarousel(id);
+  const slides = document.getElementById('s' + id);
+  const total = slides.children.length;
+  state[id].cur = idx;
+  render(id, total);
+}
+
+function render(id, total) {
+  const cur = state[id].cur;
+  const slides = document.getElementById('s' + id);
+  slides.style.transform = `translateX(-${cur * 100}%)`;
+
+  // arrows
+  const al = document.getElementById('al' + id);
+  const ar = document.getElementById('ar' + id);
+  if (al) al.classList.toggle('hidden', cur === 0);
+  if (ar) ar.classList.toggle('hidden', cur === total - 1);
+
+  // dots
+  const nav = document.getElementById('nav' + id);
+  if (nav) {
+    [...nav.children].forEach((d, i) => d.classList.toggle('active', i === cur));
+  }
+}
+
+// init all carousels
+document.querySelectorAll('.card-stage').forEach(stage => {
+  const id = stage.id.replace('c', '');
+  const slides = document.getElementById('s' + id);
+  if (!slides) return;
+  const total = slides.children.length;
+  if (total > 1) initCarousel(id);
+});
+
+// swipe support
+document.querySelectorAll('.card-stage').forEach(stage => {
+  let sx = 0;
+  const id = stage.id.replace('c', '');
+  const slides = document.getElementById('s' + id);
+  if (!slides || slides.children.length <= 1) return;
+
+  stage.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) > 40) move(id, dx < 0 ? 1 : -1);
+  });
+  stage.addEventListener('mousedown', e => { sx = e.clientX; });
+  stage.addEventListener('mouseup', e => {
+    const dx = e.clientX - sx;
+    if (Math.abs(dx) > 40) move(id, dx < 0 ? 1 : -1);
+  });
+});
+
+// ── caption toggle ──
+function toggleCap(id, btn) {
+  const el = document.getElementById(id);
+  const collapsed = el.style.maxHeight !== 'none';
+  el.style.maxHeight = collapsed ? 'none' : '60px';
+  el.style.overflow = collapsed ? 'visible' : 'hidden';
+  btn.textContent = collapsed ? 'Recolher ↑' : 'Ver legenda ↓';
+}
+
+// ── filter ──
+function filter(type, btn) {
+  document.querySelectorAll('.tf').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+
+  document.querySelectorAll('.post-wrap').forEach(p => {
+    if (type === 'all') { p.style.display = ''; return; }
+    if (type === 'turb') { p.style.display = p.dataset.boost === 'sim' ? '' : 'none'; return; }
+    p.style.display = p.dataset.fmt === type ? '' : 'none';
+  });
+
+  document.querySelectorAll('.day-block').forEach(b => {
+    const vis = [...b.querySelectorAll('.post-wrap')].some(p => p.style.display !== 'none');
+    b.style.display = vis ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

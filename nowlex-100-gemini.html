@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nowlex — Banco de Posts Completos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+    :root {
+      --blue: #006bf9;
+      --blue-dark: #0050c7;
+      --blue-light: #3d8dff;
+      --black: #1a1a1a;
+      --white: #f2f2f2;
+      --surface: #ffffff;
+      --gray-100: #f7f8fc;
+      --gray-200: #e8ecf4;
+      --gray-400: #8a94a8;
+      --gray-600: #4a526a;
+      --border: rgba(0,107,249,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter Tight', sans-serif;
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--black);
+      padding: 48px 60px 40px;
+      position: sticky; top: 0; z-index: 50;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .header-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .logo { font-size: 22px; font-weight: 900; color: var(--blue); letter-spacing: -0.5px; }
+    .logo span { color: var(--white); }
+    .header-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gray-400); letter-spacing: 1px; }
+
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn {
+      font-size: 11px; font-weight: 600; padding: 5px 14px;
+      border-radius: 20px; border: 1px solid rgba(255,255,255,0.12);
+      background: transparent; color: var(--gray-400);
+      cursor: pointer; transition: all .15s; font-family: 'Inter Tight', sans-serif;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--blue); color: white; border-color: var(--blue);
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 48px 40px; }
+
+    .section-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 24px; padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-title { font-size: 22px; font-weight: 800; color: var(--black); letter-spacing: -0.5px; }
+    .section-count {
+      margin-left: auto; font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--gray-400); letter-spacing: 1px;
+    }
+
+    .posts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; margin-bottom: 56px; }
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--gray-200);
+      border-radius: 14px; overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .post-card:hover {
+      box-shadow: 0 8px 32px rgba(0,107,249,0.1);
+      transform: translateY(-2px);
+    }
+    .post-card.turbinar { border-left: 4px solid var(--blue); }
+
+    .post-head {
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .post-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      color: var(--blue); font-weight: 700; min-width: 32px;
+    }
+    .post-formato {
+      font-size: 10px; font-weight: 700; padding: 3px 9px;
+      border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .fmt-carrossel { background: rgba(0,107,249,0.12); color: var(--blue-dark); }
+    .fmt-reels { background: rgba(26,26,26,0.1); color: var(--black); }
+    .fmt-story { background: #e8f4fd; color: #0366d6; }
+    .fmt-imagem { background: #e6f9ee; color: #1a7f37; }
+
+    .post-categoria { font-size: 10px; color: var(--gray-400); font-weight: 500; margin-left: auto; }
+    .boost-pill {
+      font-size: 9px; font-weight: 700; padding: 2px 8px;
+      background: #fff3cd; color: #856404; border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    .post-body { padding: 18px; display: flex; flex-direction: column; flex-grow: 1; }
+    .post-title {
+      font-size: 14px; font-weight: 700; color: var(--black);
+      margin-bottom: 12px; line-height: 1.4;
+    }
+    .post-legenda {
+      font-size: 12px; color: var(--gray-600); line-height: 1.7;
+      margin-bottom: 14px; white-space: pre-wrap;
+    }
+    .post-visual {
+      font-size: 11px; color: var(--gray-400); line-height: 1.6;
+      padding: 10px 12px; background: var(--gray-100);
+      border-radius: 6px; margin-bottom: 12px;
+      border-left: 2px solid var(--border);
+    }
+    .post-visual strong { color: var(--blue-dark); font-size: 10px; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .post-hashtags {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      color: var(--blue); line-height: 1.8; margin-bottom: 12px; margin-top: auto;
+    }
+
+    .post-cta {
+      font-size: 11px; font-weight: 600; color: var(--blue-dark);
+      background: rgba(0,107,249,0.07); padding: 8px 12px;
+      border-radius: 6px;
+    }
+    .post-cta::before { content: "→ "; }
+
+    @media (max-width: 750px) {
+      header { padding: 24px; }
+      .container { padding: 24px 16px; }
+      .posts-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">now<span>lex</span>.ai</div>
+    <div class="header-meta">BANCO DE POSTS COMPLETOS (70–100) · INTER TIGHT & JETBRAINS</div>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="filtrar('todos')">Todos</button>
+    <button class="filter-btn" onclick="filtrar('turbinar')">🚀 Turbinar</button>
+    <button class="filter-btn" onclick="filtrar('carrossel')">Carrossel</button>
+    <button class="filter-btn" onclick="filtrar('reels')">Reels</button>
+    <button class="filter-btn" onclick="filtrar('story')">Story</button>
+    <button class="filter-btn" onclick="filtrar('imagem')">Imagem</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="section-header">
+    <div class="section-title">Posts Temáticos de Alta Performance</div>
+    <div class="section-count">31 posts integrados</div>
+  </div>
+
+  <div class="posts-grid">
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#070</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Governança</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Termo de Referência para IA: o que não pode faltar</div>
+        <div class="post-legenda">Contratar inteligência artificial no setor público exige precisão desde o primeiro documento técnico. O Termo de Referência (TR) deve blindar a instituição contra sistemas genéricos e garantir aderência real às demandas jurídicas.
+
+Slide 1 — Guia do TR para IA Pública: Como estruturar as exigências técnicas necessárias.
+Slide 2 — Requisito 1: Definição clara do escopo (triagem, indexação ou classificação semântica).
+Slide 3 — Requisito 2: Integração direta via APIs homologadas dos sistemas locais (PJe, eProc, PROJUDI).
+Slide 4 — Requisito 3: Critérios de segurança da informação, conformidade LGPD e restrições de tráfego de dados sensíveis.
+Slide 5 — Requisito 4: Auditabilidade e IA explicável — exija justificativa algorítmica para cada saída gerada.
+Slide 6 — Requisito 5: Níveis de serviço (SLA) para suporte e atualização contínua do modelo.
+Slide 7 — A equipe técnica da Nowlex auxilia tribunais na parametrização de requisitos institucionais de conformidade.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>7 slides sequenciais estruturados de forma minimalista. Uso de tópicos claros, caixas de destaque azuis para termos legais e tipografia marcante.</div>
+        <div class="post-hashtags">#nowlex #GovTechBrasil #setorpúblico #inovaçãopública #licitacao</div>
+        <div class="post-cta">Salve este checklist para utilizar na estruturação do próximo planejamento licitatório da sua instituição.</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#071</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">O que é um modelo de linguagem jurídico?</div>
+        <div class="post-legenda">Modelos de linguagem convencionais processam informações gerais do cotidiano, mas falham diante da complexidade técnica de uma peça judicial. Um LLM especializado em direito foi estruturado especificamente para decodificar terminologias processuais e fluxos internos de tribunais.
+
+Entenda por que a especificidade técnica do modelo determina o índice de acerto na classificação automatizada de petições iniciais.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Apresentação em vídeo contendo transições rápidas de telas com códigos de processamento textual e diagramas de classificação semântica. Estilo dinâmico e focado em conteúdo técnico.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #LegalTechBR #direitoetecnologia</div>
+        <div class="post-cta">Caso possua dúvidas sobre os métodos de treinamento de LLMs, envie uma mensagem direta para iniciarmos um diálogo técnico.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="imagem" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#072</span>
+        <span class="post-formato fmt-imagem">Imagem</span>
+        <span class="post-categoria">Impacto</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Dado: % dos tribunais brasileiros sem IA em operação</div>
+        <div class="post-legenda">Levantamentos recentes do ecossistema judiciário apontam as lacunas de automação nos órgãos institucionais. O atraso na adoção de modelos inteligentes impacta diretamente o tempo médio de tramitação de novos fluxos processuais.
+
+A Nowlex fornece infraestrutura de implantação rápida para reverter esses indicadores e integrar os tribunais às diretrizes de modernização vigentes.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Gráfico estatístico central com alta saturação e contraste de dados sobre fundo escuro. Destaque numérico para os percentuais coletados.</div>
+        <div class="post-hashtags">#nowlex #CNJdigital #GovTechBrasil #IAnojudiciário #tribunaisdigitais</div>
+        <div class="post-cta">Descubra os requisitos mínimos para retirar sua instituição dessa estatística acessando nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="story" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#073</span>
+        <span class="post-formato fmt-story">Story</span>
+        <span class="post-categoria">Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Mito vs Realidade: IA jurídica</div>
+        <div class="post-legenda">Desmistificando a atuação de ferramentas algorítmicas no ambiente institucional.
+
+Mito: A inteligência artificial toma decisões autônomas substitutivas aos magistrados.
+Realidade: A IA atua na automação de rotinas repetitivas e classificação documental, mantendo a validação e o controle decisório estritamente sob supervisão humana.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Série de telas utilizando divisão cromática centralizada (cinza para mitos, azul institucional para realidades). Estrutura direta e limpa.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil</div>
+        <div class="post-cta">Interaja nos comentários relatando quais objeções técnicas você ainda observa em sua rotina profissional.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#074</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Comparativo</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Nowlex vs adaptações genéricas: a diferença que importa</div>
+        <div class="post-legenda">Adaptar ferramentas genéricas de mercado para o contexto do Judiciário gera falhas de escopo, riscos de segurança e incompatibilidade com sistemas processuais públicos.
+
+Slide 1 — Análise Comparativa: Soluções generalistas versus engenharia dedicada ao fluxo judicial.
+Slide 2 — Modelos genéricos carecem de entendimento sobre o vocabulário processual e terminologias de atos normativos.
+Slide 3 — A Nowlex possui treinamento nativo baseado no indexador de classes e assuntos unificados do CNJ.
+Slide 4 — Integrações improvisadas geram brechas no cumprimento de diretrizes rígidas da LGPD e segurança da informação.
+Slide 5 — Nossa arquitetura prevê rastreabilidade total de auditoria interna, eliminando efeitos de "caixa-preta".
+Slide 6 — O resultado prático se reflete em precisão técnica superior na rotina operacional de gabinetes e secretarias.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Tabela comparativa e diagramas estruturados entre os slides. Uso acentuado de colunas paralelas para facilitar a interpretação de vantagens.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #tribunaisdigitais</div>
+        <div class="post-cta">Acesse a demonstração técnica e observe as diferenças estruturais em tempo real: nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#075</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Bastidores</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">O time que está por trás da Nowlex</div>
+        <div class="post-legenda">Por trás da estabilidade de uma IA dedicada ao setor público existe um ecossistema focado em engenharia de dados de alta performance e assessoria em compliance normativo.
+
+Conheça as equipes responsáveis pela sustentação e conformidade que garantem a segurança operacional diária da plataforma nos tribunais integrados.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Registro audiovisual dinâmico apresentando estações de desenvolvimento de software e reuniões de alinhamento técnico, preservando dados sigilosos e focando na infraestrutura organizacional.</div>
+        <div class="post-hashtags">#nowlex #GovTechBrasil #LegalTechBR #equipe</div>
+        <div class="post-cta">Conheça nossa governança institucional e corpo técnico visitando o site institucional.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="imagem" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#076</span>
+        <span class="post-formato fmt-imagem">Imagem</span>
+        <span class="post-categoria">Impacto</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Processos parados custam dinheiro público. IA resolve.</div>
+        <div class="post-legenda">O acúmulo de processos nas filas de triagem manual sobrecarrega servidores e eleva o custo fiscal por caso julgado. A automação analítica reduz gargalos logísticos, otimizando a alocação de recursos públicos e entregando celeridade à sociedade.
+
+Eficiência administrativa não é apenas uma meta de gestão; é um imperativo legal e financeiro.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Composição visual objetiva. Frase centralizada em alta escala tipográfica contrastante. Identidade sóbria com o logotipo posicionado de forma fixa.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #setorpúblico #inovaçãopública</div>
+        <div class="post-cta">Descubra como estruturar uma matriz de eficiência analítica para sua comarca em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="story" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#077</span>
+        <span class="post-formato fmt-story">Story</span>
+        <span class="post-categoria">Engajamento</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Você é servidor, gestor ou magistrado?</div>
+        <div class="post-legenda">Queremos direcionar nossos estudos técnicos e informativos para as necessidades específicas da sua função no ecossistema de justiça.
+
+Selecione sua área principal de atuação profissional na enquete abaixo.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Layout limpo e centralizado para inserção do widget interativo de enquete do Instagram. Paleta escura institucional.</div>
+        <div class="post-hashtags">#nowlex #judiciário #IAnojudiciário</div>
+        <div class="post-cta">Vote e auxilie nossa equipe de engenharia de conteúdo a refinar as próximas publicações técnicas.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#078</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Caso</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Ministério Público + Nowlex: como a IA chegou às procuradorias</div>
+        <div class="post-legenda">O fluxo analítico de inquéritos civis, procedimentos preparatórios e denúncias possui complexidades específicas que demandam triagem de alta precisão técnica.
+
+Slide 1 — Aplicação Prática: O impacto da inteligência semântica na rotina de Procuradorias e Promotorias de Justiça.
+Slide 2 — O desafio da volumetria em peças ministeriais e documentos de suporte investigativo.
+Slide 3 — Classificação automatizada por eixos temáticos e cruzamento com as tabelas unificadas do Ministério Público.
+Slide 4 — Extração automática de pedidos urgentes (tutelas, liminares e réus presos).
+Slide 5 — Ganho de escala na emissão de pareceres institucionais por meio da agilização da triagem preliminar.
+Slide 6 — Integração direta aos sistemas de tramitação eletrônica de procedimentos ministeriais.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Uso de tons sóbrios, ícones técnicos de fluxogramas e marcações claras indicando o processamento interno de documentos ministeriais.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #ministeriopublico #LegalTechBR</div>
+        <div class="post-cta">Agende uma demonstração customizada para as rotinas analíticas do Ministério Público: nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#079</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Como a IA lida com documentos digitalizados e OCR</div>
+        <div class="post-legenda">Nem todo documento protocolado chega estruturado em formato de texto digital nativo. Peças antigas escaneadas e anexos de baixa qualidade exigem tecnologia OCR (Optical Character Recognition) inteligente.
+
+A Nowlex não apenas digitaliza a imagem; ela interpreta semanticamente o contexto do conteúdo recuperado, garantindo classificação precisa independente da origem física da peça.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Demonstração visual acelerada mostrando um documento escaneado recebendo uma camada analítica que extrai e destaca os blocos textuais processados. 30 segundos.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #LegalTechBR #GovTechBrasil #processoeletronico</div>
+        <div class="post-cta">Consulte nossos relatórios de precisão analítica para documentos escaneados em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="imagem" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#080</span>
+        <span class="post-formato fmt-imagem">Imagem</span>
+        <span class="post-categoria">Conversão</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Demonstração técnica gratuita para tribunais</div>
+        <div class="post-legenda">Conheça o funcionamento da Nowlex em uma sessão conduzida diretamente por engenheiros de software e especialistas em governança jurídica.
+
+45 minutos focados em arquitetura de dados, barramentos de integração nativa e validação real de eficiência. Sem abordagens estritamente comerciais; foco total na solução de desafios de infraestrutura judicial.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Fundo azul institucional limpo com texto em branco de alta definição. Ausência de ruídos gráficos e foco na clareza do convite técnico.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR</div>
+        <div class="post-cta">Escolha o horário de preferência da sua equipe técnica agendando em nowlex.ai/demo</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="story" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#081</span>
+        <span class="post-formato fmt-story">Story</span>
+        <span class="post-categoria">Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Sabia que o PJe tem API aberta? O que isso significa para IA</div>
+        <div class="post-legenda">A arquitetura de sistemas abertos do Processo Judicial Eletrônico (PJe) permite integrações diretas e seguras via barramentos oficiais de dados.
+
+Isso significa que a plataforma Nowlex atua conectada nativamente ao sistema, eliminando a necessidade de robôs de automação externa ou middlewares inseguros que violam políticas de governança.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Esquema gráfico simplificado demonstrando a conexão segura entre o servidor do tribunal (PJe) e o modelo semântico. Estilo técnico.</div>
+        <div class="post-hashtags">#PJe #nowlex #IAnojudiciário #GovTechBrasil</div>
+        <div class="post-cta">Acesse nossa documentação técnica de integração e compreenda o fluxo de dados em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#082</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Tendência</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Defensoria Pública e IA: como a tecnologia amplia o acesso à Justiça</div>
+        <div class="post-legenda">A alta demanda diária por assistência jurídica integral e gratuita exige triagens eficientes para priorizar atendimentos urgentes e organizar fluxos de peticionamento inicial.
+
+Slide 1 — Atuação Institucional: O papel transformador da inteligência artificial nas Defensorias Públicas.
+Slide 2 — O gargalo do atendimento inicial e o volume crítico de documentos de hipossuficiência apresentados.
+Slide 3 — Triagem automatizada por núcleos especializados (Família, Cível, Criminal e Fazenda Pública).
+Slide 4 — Identificação acelerada de prazos processuais críticos e demandas envolvendo direito à saúde ou alvarás de soltura.
+Slide 5 — Redução drástica do tempo de espera pré-atendimento, otimizando a rotina de defensores e assessores.
+Slide 6 — Ampliação da capacidade de atendimento e fortalecimento da cidadania por meio da tecnologia preditiva.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Uso de paleta equilibrada com foco em elementos humanos minimalistas e gráficos demonstrativos de filas de atendimento organizadas por prioridade.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #defensoriapublica #acessoajustica</div>
+        <div class="post-cta">Conheça as customizações da Nowlex estruturadas para o ecossistema de Defensorias Públicas em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#083</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Funcionalidade</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Nowlex Dashboard: como o gestor acompanha a IA em tempo real</div>
+        <div class="post-legenda">A governança de dados exige monitoramento analítico completo. O painel central da Nowlex exibe em tempo real o volume de processos triados, índices de acurácia operacional do modelo e a volumetria de gargalos solucionados.
+
+Controle total e auditabilidade transparente em um único ponto estratégico de visualização técnica.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Exibição em vídeo da interface administrativa da plataforma, apresentando gráficos dinâmicos de performance de forma estritamente analítica. 45 segundos.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR</div>
+        <div class="post-cta">Assista ao tour completo pelas funcionalidades do nosso painel central acessando o portal oficial.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="imagem" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#084</span>
+        <span class="post-formato fmt-imagem">Imagem</span>
+        <span class="post-categoria">Impacto</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Cada processo parado tem um custo. Você sabe qual é o do seu tribunal?</div>
+        <div class="post-legenda">Manter acervos massivos parados na fase de triagem consome recursos operacionais significativos e compromete os índices de produtividade institucional.
+
+A transição para um modelo automatizado reduz o custo médio de tramitação interna, gerando economia fiscal direta e celeridade processual mensurável.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Design corporativo com foco em dados numéricos e aspas analíticas expressivas. Paleta azul e branca de alto contraste.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #setorpúblico</div>
+        <div class="post-cta">Solicite um estudo analítico de viabilidade operacional e volumetria para a sua jurisdição através do site nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="story" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#085</span>
+        <span class="post-formato fmt-story">Story</span>
+        <span class="post-categoria">Prova Social</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Quanto tempo o seu tribunal economiza por semana com Nowlex?</div>
+        <div class="post-legenda">Otimizar a triagem e distribuição preliminar de casos libera centenas de horas semanais das assessorias jurídicas.
+
+Descubra o potencial de ganho operacional da sua comarca mapeando o volume atual de distribuição com nossa equipe técnica de engenharia de processos.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Simulador visual interativo adaptado para tela de smartphone. Destaque para marcadores de tempo e eficiência. Fundo escuro.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil</div>
+        <div class="post-cta">Utilize nossa calculadora de impacto operacional disponível na bio e estime o ganho estrutural.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#086</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Governança</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Como apresentar IA para a alta direção do seu tribunal</div>
+        <div class="post-legenda">Aprovar projetos estratégicos de inovação tecnológica junto à presidência ou conselhos diretivos exige abordagens focadas em conformidade, retorno orçamentário e segurança jurídica.
+
+Slide 1 — Argumentação Institucional: Como estruturar a apresentação de soluções de IA para a alta liderança.
+Slide 2 — Foque nos marcos legais e resoluções do CNJ que exigem e regulamentam a transformação digital.
+Slide 3 — Apresente dados volumétricos internos: demonstre claramente onde estão os gargalos manuais crônicos de triagem.
+Slide 4 — Evidencie a segurança da informação: demonstre as garantias de conformidade com a LGPD e criptografia de dados sensíveis.
+Slide 5 — Traduza eficiência em números reais: apresente projeções de redução no tempo de tramitação inicial.
+Slide 6 — Mostre previsibilidade contratual: traga clareza sobre prazos de onboarding, treinamento do modelo e estabilização de sistemas.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Estruturação de slides executivos utilizando paleta corporativa neutra, ícones de liderança estratégica e formatações sóbrias.</div>
+        <div class="post-hashtags">#nowlex #GovTechBrasil #IAnojudiciário #inovaçãopública #setorpúblico</div>
+        <div class="post-cta">Baixe nosso framework técnico de apresentação institucional e otimize seus relatórios internos de planejamento: nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#087</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">IA e viés algorítmico: como a Nowlex previne discriminação</div>
+        <div class="post-legenda">A ética algorítmica no setor público é um pilar não negociável. Sistemas automatizados não podem herdar ou amplificar desvios ou preconceitos históricos contidos em bases de dados brutas.
+
+Nossa arquitetura técnica emprega metodologias avançadas de auditoria de dados e treinamento balanceado, assegurando decisões classificatórias estritamente técnicas, transparentes e alinhadas às diretrizes protetivas do CNJ.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Animação vetorial focada em infraestrutura e equidade de dados. Fluxo visual que exemplifica a filtragem técnica e neutralidade de termos jurídicos. 45 segundos.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #CNJdigital #direitoetecnologia #GovTechBrasil</div>
+        <div class="post-cta">Consulte os relatórios detalhados sobre nossa política de integridade algorítmica e ética em IA acessando nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="imagem" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#088</span>
+        <span class="post-formato fmt-imagem">Imagem</span>
+        <span class="post-categoria">Conversão</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Último trimestre de 2026: seu tribunal vai entrar ou vai ficar de fora?</div>
+        <div class="post-legenda">O encerramento do ciclo anual de planejamento estratégico exige resoluções concretas para o atingimento das metas de produtividade. Tribunais que consolidarem sua infraestrutura inteligente agora iniciarão o próximo período com acervos equalizados e processos otimizados.
+
+A janela técnica para implantação e parametrização segura neste exercício está aberta.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Tipografia limpa e agressiva sobre fundo fosco de alto contraste. Elementos geométricos azuis direcionando o olhar para o campo de ação textual.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #CNJdigital</div>
+        <div class="post-cta">Garanta o cronograma de homologação e onboarding técnico para sua comarca agendando uma reunião em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="story" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#089</span>
+        <span class="post-formato fmt-story">Story</span>
+        <span class="post-categoria">Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">O papel do magistrado na era da IA</div>
+        <div class="post-legenda">A tecnologia atua como camada de suporte de alta performance, eliminando o atrito das atividades burocráticas preliminares que consomem tempo produtivo de gabinetes.
+
+O ato decisório final, a sensibilidade humana e a aplicação justa do ordenamento jurídico permanecem competências exclusivas e inalienáveis dos magistrados. A IA serve à inteligência humana.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Fundo cinza claro com diagramação tipográfica elegante. Uso equilibrado de espaço negativo para transmitir clareza institucional.</div>
+        <div class="post-hashtags">#nowlex #magistratura #IAnojudiciário #CNJdigital</div>
+        <div class="post-cta">Compreenda nossa filosofia de desenvolvimento focado em autonomia humana visitando nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#090</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Autoridade</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Nowlex por dentro: arquitetura técnica explicada para gestores</div>
+        <div class="post-legenda">Apresentação transparente das camadas estruturais que garantem a estabilidade e a alta acurácia do nosso ecossistema de processamento semântico de dados públicos.
+
+Slide 1 — Engenharia de Sistemas: A arquitetura técnica interna da plataforma Nowlex.
+Slide 2 — Camada 1: Barramento de Conexão Nativa via APIs oficiais com sistemas processuais de destino.
+Slide 3 — Camada 2: Motor OCR Avançado para decodificação e higienização de imagens e arquivos escaneados.
+Slide 4 — Camada 3: Modelo LLM proprietário treinado exclusivamente nas taxonomias jurídicas unificadas do CNJ.
+Slide 5 — Camada 4: Módulo de Segurança e Anonimização em conformidade estrita com as regras da LGPD.
+Slide 6 — Camada 5: Painel de logs criptografados e trilhas completas de auditoria técnica para governança.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Diagramas de blocos técnicos, fluxogramas de pacotes de dados e arquitetura de software detalhada com marcações azuis e pretas.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LGPD #CNJdigital #LegalTechBR</div>
+        <div class="post-cta">Acesse nossa documentação técnica detalhada e white papers estruturados em nowlex.ai/docs</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#091</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Bastidores</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Como é o suporte Nowlex depois da implantação</div>
+        <div class="post-legenda">A entrega do software é apenas o ponto de partida. Projetos no setor público demandam acompanhamento contínuo, acordos rígidos de nível de serviço (SLA) e atualizações automáticas que acompanham as mudanças das normativas judiciais.
+
+Veja como nossa estrutura técnica atua diariamente na sustentação e otimização dos modelos implementados nos tribunais parceiros.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Depoimentos rápidos focados no time de suporte de infraestrutura e centrais de monitoramento técnico de dados. Tom seguro e corporativo. 60 segundos.</div>
+        <div class="post-hashtags">#nowlex #GovTechBrasil #IAnojudiciário #setorpúblico</div>
+        <div class="post-cta">Consulte nossas políticas de atendimento pós-implantação e termos de SLA estruturados no portal oficial.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="imagem" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#092</span>
+        <span class="post-formato fmt-imagem">Imagem</span>
+        <span class="post-categoria">Impacto</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Quando a IA erra — e o que a Nowlex faz a respeito</div>
+        <div class="post-legenda">Transparência técnica fundamenta relações de confiança no ecossistema público. Modelos probabilísticos possuem margens de variação analítica. O diferencial da Nowlex reside na governança do erro.
+
+A plataforma implementa loops de feedback supervisionados por humanos, permitindo que a equipe interna revise classificações divergentes e realimente o sistema, elevando a precisão do modelo a cada ciclo analítico.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Interface gráfica limpa exibindo o fluxo de correção e aprendizado contínuo do algoritmo frente a uma divergência terminológica. Fundo azul escuro.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #CNJdigital #transparência</div>
+        <div class="post-cta">Compreenda nossas políticas de transparência algorítmica e melhoria contínua em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="story" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#093</span>
+        <span class="post-formato fmt-story">Story</span>
+        <span class="post-categoria">Engajamento</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Salve: os 5 melhores posts da Nowlex para compartilhar no trabalho</div>
+        <div class="post-legenda">Compilamos nossos relatórios de governança, guias de estruturação de Termos de Referência e checklists de conformidade LGPD mais acessados pelas equipes técnicas neste trimestre.
+
+Consolide os conteúdos essenciais e compartilhe com os departamentos de TI e assessoria jurídica da sua instituição.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Carrossel de miniaturas com as capas das publicações técnicas de maior destaque do canal, estruturadas com indicações de salvamento.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil</div>
+        <div class="post-cta">Utilize o recurso de salvamento do Instagram e mantenha os materiais técnicos acessíveis na sua rotina profissional.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#094</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Conversão</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">O processo de contratação Nowlex: do primeiro contato ao sistema em ar</div>
+        <div class="post-legenda">Adotar soluções tecnológicas complexas no setor público não precisa ser um processo moroso ou burocrático. Estruturamos uma jornada previsível, transparente e em total conformidade legal.
+
+Slide 1 — Roteiro de Implantação: Os marcos contratuais e técnicos da jornada Nowlex.
+Slide 2 — Etapa 1: Alinhamento institucional e escopo volumétrico inicial das demandas da comarca.
+Slide 3 — Etapa 2: Sessão de validação técnica da API e análise de compatibilidade de infraestrutura interna.
+Slide 4 — Etapa 3: Formalização jurídica amparada no Marco Legal das Startups ou Nova Lei de Licitações.
+Slide 5 — Etapa 4: Onboarding assistido e parametrização segura das regras de negócio do tribunal.
+Slide 6 — Etapa 5: Monitoramento assistido nos primeiros trinta dias de operação em produção plena.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Infográfico linear contendo cronogramas claros, indicações de responsabilidade de equipe e paleta minimalista de alta legibilidade.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #setorpúblico #inovaçãopública</div>
+        <div class="post-cta">Inicie a jornada de transformação digital da sua comarca acessando nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#095</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Educativo</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Transformação digital no judiciário: onde estamos e para onde vamos</div>
+        <div class="post-legenda">O Judiciário brasileiro consolidou a digitalização física dos acervos. O desafio contemporâneo não reside mais na eliminação do papel, mas na inteligência analítica dos dados armazenados.
+
+Compreenda o panorama técnico que posiciona os algoritmos semânticos explicáveis como a infraestrutura indispensável para a sustentabilidade da prestação jurisdicional moderna.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Análise de conjuntura conduzida de forma sóbria, utilizando elementos estatísticos projetados graficamente na tela. Foco técnico-institucional. 60 segundos.</div>
+        <div class="post-hashtags">#nowlex #CNJdigital #GovTechBrasil #IAnojudiciário #inovaçãopública #transformacaodigital</div>
+        <div class="post-cta">Faça parte do ecossistema de inovação que molda o futuro da justiça pública acessando nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="imagem" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#096</span>
+        <span class="post-formato fmt-imagem">Imagem</span>
+        <span class="post-categoria">Impacto</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Nowlex em números: o volume que nossos clientes processam</div>
+        <div class="post-legenda">A eficiência e estabilidade de um modelo analítico são validadas pela volumetria diária suportada em ambiente de produção contínua.
+
+Nossas integrações processam fluxos massivos de petições e documentos oficiais sob rígidos critérios de conformidade regulatória e segurança cibernética, garantindo estabilidade e alta acurácia aos tribunais consorciados.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Composição gráfica focada em indicadores numéricos de grande escala. Fundo azul profundo com tipografia JetBrains Mono em evidência de dados.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #tribunaisdigitais</div>
+        <div class="post-cta">Integre sua comarca a uma infraestrutura tecnológica estável e homologada visitando nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="story" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#097</span>
+        <span class="post-formato fmt-story">Story</span>
+        <span class="post-categoria">Engajamento</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Última semana: o que vem no próximo ciclo de conteúdo</div>
+        <div class="post-legenda">Encerramos esta etapa de análises regulatórias e white papers de engenharia de dados.
+
+Nas próximas semanas, traremos demonstrações práticas de novas ferramentas de automação analítica, entrevistas técnicas e atualizações de produtos integrados.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Arte conceitual em tom azul metálico contendo marcadores cronológicos abstratos. Layout focado em gerar expectativa técnica.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário</div>
+        <div class="post-cta">Ative o ícone de notificações no perfil institucional da Nowlex para acompanhar as atualizações técnicas em primeira mão.</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#098</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Autoridade</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Nowlex 2026: o que construímos e o que vem pela frente</div>
+        <div class="post-legenda">Um balanço consolidado das evoluções de engenharia e expansões de conformidade regulatória operadas ao longo deste ano na arquitetura da nossa plataforma.
+
+Slide 1 — Relatório Executivo: Consolidação estrutural e marcos técnicos alcançados em 2026.
+Slide 2 — Homologação de novos barramentos de integração nativa com eProc e sistemas estaduais unificados.
+Slide 3 — Redução média comprovada no tempo de triagem preliminar de gabinetes integrados.
+Slide 4 — Atualização contínua do motor semântico para total alinhamento com as novas resoluções éticas do CNJ.
+Slide 5 — Implementação de novas camadas criptográficas de segurança da informação em conformidade com auditorias externas.
+Slide 6 — Roadmap de expansão: Novas funcionalidades de cruzamento jurisprudencial preditivo em desenvolvimento.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Apresentação em linha do tempo elegante, gráficos de barras limpos indicando o crescimento da acurácia e paleta sóbria preta e azul.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #CNJdigital</div>
+        <div class="post-cta">Consulte nossas diretrizes públicas de inovação e notas de desenvolvimento em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card" data-fmt="reels" data-boost="nao">
+      <div class="post-head">
+        <span class="post-num">#099</span>
+        <span class="post-formato fmt-reels">Reels</span>
+        <span class="post-categoria">Institucional</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Nowlex: por que IA no judiciário não pode ser improviso</div>
+        <div class="post-legenda">A inserção de inteligência artificial na espinha dorsal do Poder Judiciário exige rigor metodológico, seriedade corporativa e responsabilidade institucional.
+
+Improvisar com soluções genéricas ou adaptações frágeis coloca em risco a segurança da informação, a integridade dos dados jurisdicionais e a conformidade legal do tribunal. Na Nowlex, tratamos a inovação como engenharia de missão crítica.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Manifesto em vídeo institucional de alto padrão estético corporativo. Transições sóbrias, tipografia em blocos limpos e trilha orquestral neutra e imersiva. 60 segundos.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #CNJdigital #manifesto</div>
+        <div class="post-cta">Conheça os princípios éticos e técnicos que fundamentam nosso compromisso com a justiça digital em nowlex.ai</div>
+      </div>
+    </div>
+
+    <div class="post-card turbinar" data-fmt="carrossel" data-boost="sim">
+      <div class="post-head">
+        <span class="post-num">#100</span>
+        <span class="post-formato fmt-carrossel">Carrossel</span>
+        <span class="post-categoria">Conversão Final</span>
+        <span class="boost-pill">🚀 Turbinar</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">Post 100: obrigado por acompanhar. Agora é hora de agir.</div>
+        <div class="post-legenda">Alcançamos a marca de 100 publicações técnicas dedicadas a desmistificar, mapear e propor soluções estruturadas para a inteligência artificial no Judiciário brasileiro. A fundamentação técnica foi exposta. Os caminhos legais de contratação foram descritos. O próximo passo envolve ação estratégica da sua comarca.
+
+Slide 1 — Conclusão de Ciclo: 100 publicações pautadas em integridade, engenharia e conformidade jurídica.
+Slide 2 — Analisamos as normativas do CNJ, as regras de compliance da LGPD e os barramentos das APIs oficiais.
+Slide 3 — Demonstramos a arquitetura explicável, o OCR inteligente e os painéis internos de auditoria de dados.
+Slide 4 — Agora, convidamos sua equipe a sair do campo teórico e observar a plataforma operando na prática.
+Slide 5 — Agende uma sessão técnica de 45 minutos desenhada especificamente para os desafios da sua instituição.</div>
+        <div class="post-visual"><strong>Diretrizes Visuais</strong>Design comemorativo de encerramento. O numeral "100" estilizado em grandes proporções com traços limpos e modernos. Fundo escuro com alto brilho nas fontes azuis.</div>
+        <div class="post-hashtags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #CNJdigital #LGPD #100posts</div>
+        <div class="post-cta">Acesse o portal oficial, finalize a etapa de planejamento e agende a demonstração da sua equipe em nowlex.ai</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function filtrar(tipo) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const cards = document.querySelectorAll('.post-card');
+    cards.forEach(card => {
+      if (tipo === 'todos') {
+        card.style.display = '';
+      } else if (tipo === 'turbinar') {
+        card.style.display = card.dataset.boost === 'sim' ? '' : 'none';
+      } else {
+        card.style.display = card.dataset.fmt === tipo ? '' : 'none';
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
