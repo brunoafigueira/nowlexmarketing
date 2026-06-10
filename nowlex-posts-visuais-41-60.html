@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nowlex.AI — Campanha Instagram · 100 Posts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#006bf9;--black:#1a1a1a;--off:#f2f2f2;
+  --bg:#0a0a0a;--sur:#141414;--bdr:rgba(255,255,255,.07);
+}
+body{font-family:'Inter Tight',system-ui,sans-serif;background:var(--bg);color:var(--off);min-height:100vh}
+
+/* ── TOPBAR ── */
+.top{position:sticky;top:0;z-index:200;background:rgba(10,10,10,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--bdr);padding:0 28px;height:56px;display:flex;align-items:center;gap:16px}
+.brand{font-size:15px;font-weight:900;color:var(--blue);letter-spacing:-.3px;white-space:nowrap}
+.brand span{color:var(--off)}
+.top-meta{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1px}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.fb{font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.35);cursor:pointer;font-family:'Inter Tight',sans-serif;transition:all .15s;white-space:nowrap}
+.fb.on,.fb:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ── GRID ── */
+.page{max-width:1140px;margin:0 auto;padding:32px 20px 80px}
+.section-lbl{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;padding-top:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:40px}
+
+/* ── THUMB CARD ── */
+.card{aspect-ratio:1/1;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;background:var(--black);transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,107,249,.2)}
+.card-inner{width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:12px;position:relative;z-index:2}
+.card-num{position:absolute;top:10px;left:10px;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:var(--blue);letter-spacing:.5px;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:3px;z-index:3}
+.card-fmt{position:absolute;top:10px;right:10px;font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;z-index:3}
+.fc{background:rgba(0,107,249,.25);color:#90bfff}
+.fr{background:rgba(255,255,255,.15);color:#ddd}
+.fs{background:rgba(0,200,230,.15);color:#7de0ea}
+.fi{background:rgba(80,210,120,.15);color:#7dd49a}
+.card-boost{position:absolute;bottom:10px;right:10px;font-size:8px;font-weight:700;background:#fff3cd;color:#7a5700;padding:2px 6px;border-radius:3px;z-index:3}
+.card-title{font-size:11px;font-weight:700;line-height:1.3;color:var(--off);text-shadow:0 1px 4px rgba(0,0,0,.8);position:relative;z-index:2}
+
+/* card bg themes */
+.t-dark .card-bg{background:#1a1a1a}
+.t-blue .card-bg{background:var(--blue)}
+.t-white .card-bg{background:var(--off)}
+.t-white .card-title{color:var(--black);text-shadow:none}
+.t-ink .card-bg{background:#0e0e14}
+.card-bg{position:absolute;inset:0;z-index:0}
+.card-blob{position:absolute;border-radius:50%;background:rgba(0,107,249,.3);filter:blur(40px);pointer-events:none;z-index:1}
+
+/* ── MODAL OVERLAY ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{display:flex;gap:24px;max-width:900px;width:100%;max-height:90vh}
+.modal-post{width:420px;min-width:320px;aspect-ratio:1/1;border-radius:14px;overflow:hidden;flex-shrink:0;position:relative;font-family:'Inter Tight',sans-serif}
+.modal-side{flex:1;display:flex;flex-direction:column;gap:0;min-width:0;overflow:hidden}
+.modal-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.modal-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);font-weight:700}
+.modal-fmt-badge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px}
+.modal-boost{font-size:9px;font-weight:700;padding:2px 8px;background:#fff3cd;color:#7a5700;border-radius:3px}
+.modal-close{margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--off);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:rgba(255,255,255,.1)}
+.modal-title{font-size:15px;font-weight:800;letter-spacing:-.3px;margin-bottom:12px;color:var(--off)}
+.modal-caption{flex:1;overflow-y:auto;font-size:12px;line-height:1.75;color:rgba(242,242,242,.55);white-space:pre-line;padding-right:4px;margin-bottom:14px}
+.modal-caption::-webkit-scrollbar{width:3px}
+.modal-caption::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+.modal-tags{font-family:'DM Mono',monospace;font-size:10px;color:rgba(0,107,249,.6);line-height:1.9;margin-bottom:16px}
+.copy-btn{padding:11px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter Tight',sans-serif;transition:all .15s;display:flex;align-items:center;gap:8px}
+.copy-btn:hover{background:#0058d4}
+.copy-btn.copied{background:#1a7f37}
+
+/* carousel inside modal */
+.mtrack{display:flex;height:100%;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.mslide{flex:0 0 100%;height:100%;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.marr{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:14px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:all .15s;backdrop-filter:blur(6px)}
+.marr:hover{background:var(--blue)}
+.marr.L{left:8px}.marr.R{right:8px}
+.marr.hide{opacity:0;pointer-events:none}
+.mdots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:10}
+.mdot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:all .2s}
+.mdot.on{background:#fff;width:14px;border-radius:2px}
+
+/* slide content */
+.si{position:relative;z-index:2;padding:28px 32px;display:flex;flex-direction:column;height:100%}
+.blob{position:absolute;border-radius:50%;background:rgba(0,107,249,.28);filter:blur(60px);pointer-events:none}
+.t-dark{background:#1a1a1a}
+.t-blue{background:var(--blue)}
+.t-white{background:var(--off)}
+.t-ink{background:#0e0e14}
+.t-mid{background:#111827}
+.t-dark::before,.t-ink::before,.t-mid::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(0,107,249,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,107,249,.05) 1px,transparent 1px);background-size:36px 36px}
+.eye{font-size:8px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);font-family:'DM Mono',monospace;margin-bottom:auto}
+.t-blue .eye{color:rgba(255,255,255,.6)}
+.t-white .eye{color:var(--blue)}
+.hl{font-size:clamp(20px,4vw,36px);font-weight:800;line-height:1.05;letter-spacing:-1.2px;color:#f2f2f2;margin-bottom:12px}
+.t-white .hl{color:#1a1a1a}
+.t-blue .hl{color:#fff}
+.hl em{font-style:normal;color:var(--blue)}
+.t-blue .hl em{color:rgba(255,255,255,.75)}
+.t-white .hl em{color:var(--blue)}
+.bd{font-size:11px;font-weight:400;line-height:1.65;color:rgba(242,242,242,.5);margin-bottom:16px}
+.t-blue .bd{color:rgba(255,255,255,.7)}
+.t-white .bd{color:rgba(26,26,26,.55)}
+.stat-n{font-size:clamp(52px,10vw,82px);font-weight:900;letter-spacing:-3px;line-height:1;color:var(--blue)}
+.t-blue .stat-n{color:#fff}
+.stat-l{font-size:11px;font-weight:500;color:rgba(242,242,242,.4);margin-top:4px;margin-bottom:16px;line-height:1.4}
+.t-blue .stat-l{color:rgba(255,255,255,.6)}
+.t-white .stat-l{color:rgba(26,26,26,.45)}
+.rule{width:28px;height:3px;background:var(--blue);border-radius:2px;margin-bottom:14px}
+.t-blue .rule{background:rgba(255,255,255,.45)}
+.t-white .rule{background:var(--blue)}
+.wm{margin-top:auto;font-size:10px;font-weight:800;letter-spacing:-.2px;color:rgba(242,242,242,.12)}
+.t-white .wm{color:rgba(26,26,26,.12)}
+.t-blue .wm{color:rgba(255,255,255,.22)}
+.wm em{font-style:normal;color:var(--blue)}
+.t-blue .wm em{color:rgba(255,255,255,.45)}
+.cta{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:12px}
+.t-blue .cta{color:rgba(255,255,255,.85)}
+.cl{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.ci{display:flex;align-items:flex-start;gap:8px;font-size:11px;font-weight:500;color:rgba(242,242,242,.75);line-height:1.4}
+.t-white .ci{color:rgba(26,26,26,.72)}
+.cdot{width:16px;height:16px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:8px;color:#fff;font-weight:700;margin-top:1px}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-size:9px;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid rgba(0,107,249,.3);color:rgba(0,107,249,.85);background:rgba(0,107,249,.08)}
+.t-blue .chip{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.1)}
+.t-white .chip{border-color:rgba(0,107,249,.25);color:var(--blue)}
+.poll{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;width:100%}
+.popt{padding:8px 12px;border-radius:6px;border:1px solid rgba(0,107,249,.2);font-size:11px;font-weight:600;color:rgba(242,242,242,.7);background:rgba(0,107,249,.06);display:flex;align-items:center;gap:7px}
+.popt::before{content:'';width:10px;height:10px;border-radius:50%;border:2px solid var(--blue);flex-shrink:0}
+.story-c{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:14px;padding:32px 28px}
+.sq{font-size:clamp(18px,3.5vw,26px);font-weight:800;letter-spacing:-1px;line-height:1.15;color:#f2f2f2;max-width:300px}
+.t-blue .sq{color:#fff}
+.btn-pill{display:inline-block;font-size:12px;font-weight:700;background:var(--blue);color:#fff;padding:9px 20px;border-radius:28px;margin-top:2px}
+.t-blue .btn-pill{background:rgba(255,255,255,.18)}
+.sn{position:absolute;top:16px;right:20px;font-size:8px;font-weight:600;color:rgba(255,255,255,.16);font-family:'DM Mono',monospace;letter-spacing:.5px;z-index:3}
+.t-white .sn{color:rgba(26,26,26,.15)}
+.two-stat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ts-box{background:rgba(0,107,249,.07);border:1px solid rgba(0,107,249,.18);border-radius:7px;padding:12px 10px;text-align:center}
+.ts-n{font-size:clamp(24px,5vw,40px);font-weight:900;letter-spacing:-2px;color:var(--blue);line-height:1}
+.ts-l{font-size:9px;color:rgba(242,242,242,.35);margin-top:3px;line-height:1.3}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:0;height:100%}
+.ba-col{display:flex;flex-direction:column;justify-content:flex-end;padding:24px 20px}
+.ba-col:first-child{background:#1a1a1a;border-right:1px solid rgba(255,255,255,.05)}
+.ba-col:last-child{background:#0d1929}
+.ba-lbl{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.ba-lbl.red{color:#ff5555}.ba-lbl.blue{color:var(--blue)}
+.ba-num{font-size:clamp(36px,8vw,60px);font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:5px}
+.ba-num.red{color:#ff5555}.ba-num.blue{color:var(--blue)}
+.ba-desc{font-size:10px;color:rgba(242,242,242,.3);line-height:1.5;margin-bottom:12px}
+.ba-foot{font-size:9px;color:rgba(242,242,242,.18);font-weight:600;font-family:'DM Mono',monospace}
+.qt{border-left:3px solid var(--blue);padding:12px 14px;background:rgba(0,107,249,.06);border-radius:0 7px 7px 0;margin-bottom:14px}
+.qt-text{font-size:12px;font-style:italic;color:rgba(242,242,242,.72);line-height:1.6;margin-bottom:6px}
+
+@media(max-width:680px){
+  .modal{flex-direction:column;max-height:95vh;overflow-y:auto}
+  .modal-post{width:100%;min-width:0;aspect-ratio:1/1}
+  .top-meta{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">now<span>lex</span>.ai</div>
+  <div class="top-meta">100 POSTS · JUN–SET 2026</div>
+  <div class="filters">
+    <button class="fb on" onclick="filt('all',this)">Todos</button>
+    <button class="fb" onclick="filt('turb',this)">🚀 Turbinar</button>
+    <button class="fb" onclick="filt('c',this)">Carrossel</button>
+    <button class="fb" onclick="filt('r',this)">Reels</button>
+    <button class="fb" onclick="filt('s',this)">Story</button>
+    <button class="fb" onclick="filt('i',this)">Imagem</button>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- grid preenchido via JS -->
+<div id="grid" class="grid"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-post" id="mpost"></div>
+    <div class="modal-side">
+      <div class="modal-header">
+        <span class="modal-num" id="mnum"></span>
+        <span class="modal-fmt-badge" id="mfmt"></span>
+        <span class="modal-boost" id="mboost" style="display:none">🚀 Turbinar</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-title" id="mtitle"></div>
+      <div class="modal-caption" id="mcap"></div>
+      <div class="modal-tags" id="mtags"></div>
+      <button class="copy-btn" id="copybtn" onclick="copyLeg()">
+        <span>📋</span><span id="copylbl">Copiar Legenda</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA — 100 posts
+   fmt: c=carrossel, r=reels, s=story, i=imagem
+   boost: true = turbinar
+   theme: t-dark / t-blue / t-white / t-ink / t-mid
+   slides: array de objetos {theme, html}
+═══════════════════════════════════════════ */
+const POSTS = [
+{id:'001',date:'09/06 TER',fmt:'r',boost:true,cat:'Lançamento',
+title:'IA que nasce dentro das regras',
+caption:`O Judiciário brasileiro processa mais de 80 milhões de casos ativos. Cada minuto conta.\n\nA Nowlex nasceu dentro das regras — integrada ao PJe, eProc e PROJUDI, com conformidade CNJ e LGPD desde o primeiro dia.\n\nNão é mais um software. É IA que entende o fluxo processual de dentro pra fora.\n\n👉 Conheça em nowlex.ai`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #PJe',
+slides:[{t:'t-ink',h:`<div class="blob" style="width:320px;height:320px;top:-70px;right:-70px;opacity:.45"></div><div class="si"><div class="eye">nowlex.ai · lançamento</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center"><div class="stat-n">80<span style="font-size:.42em;color:rgba(242,242,242,.28)">M</span></div><div class="stat-l">casos ativos no judiciário brasileiro</div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)">IA que nasce<br>dentro das <em>regras.</em></div><div class="bd" style="font-size:11px;margin-bottom:0">PJe · eProc · PROJUDI<br>Conformidade CNJ e LGPD desde o dia 1.</div></div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'002',date:'09/06 TER',fmt:'s',boost:false,cat:'Engajamento',
+title:'Poll: Quanto tempo classificando processos?',
+caption:`Poll de abertura — mapeia a dor do público. Quem votar em "Mais de 3h" recebe DM automático com link nowlex.ai.`,
+tags:'#nowlex #judiciário #servidorpúblico',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:240px;height:240px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.16"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">enquete · nowlex.ai</div><div class="sq">Quanto tempo você gasta classificando processos manualmente por dia?</div><div class="poll"><div class="popt">Menos de 1h</div><div class="popt">1h a 3h</div><div class="popt">Mais de 3h — todo dia</div></div><div style="font-size:10px;color:rgba(242,242,242,.22)">A IA resolve isso. nowlex.ai</div></div></div>`}]},
+
+{id:'003',date:'10/06 QUA',fmt:'c',boost:true,cat:'Governança',
+title:'5 pontos antes de contratar IA no tribunal',
+caption:`Adotar IA no judiciário sem verificar esses 5 pontos é assinar um problema futuro.\n\n1 — Conformidade LGPD (Lei 13.709/18)\n2 — Integração nativa: PJe, eProc, PROJUDI\n3 — Auditabilidade total (Res. CNJ 332/2020)\n4 — Soberania de dados: nuvem ou on-premise\n5 — Suporte técnico ao processo licitatório\n\nA Nowlex atende todos os 5. Salve e encaminhe para o gestor de TI do seu tribunal.`,
+tags:'#nowlex #LGPD #CNJdigital #GovTechBrasil #IAnojudiciário #tribunaisdigitais',
+slides:[
+{t:'t-dark',h:`<div class="blob" style="width:300px;height:300px;top:-50px;right:-50px;opacity:.4"></div><span class="sn">1/7</span><div class="si"><div class="eye">checklist · governança</div><div style="flex:1"></div><div class="hl">5 pontos<br>antes de<br>contratar <em>IA</em><br>no tribunal.</div><div class="bd" style="font-size:11px;margin-bottom:0">Para gestores e diretores de TI do setor público.</div><div class="wm" style="margin-top:16px">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">2/7</span><div class="si"><div class="eye">ponto 01</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,30px)">Conformidade<br><em>LGPD</em></div><div class="bd">A solução trata dados sensíveis dentro da Lei 13.709/18? Logs de auditoria e RIPD são obrigatórios.</div><div class="chip" style="align-self:flex-start">Lei 13.709/18</div><div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">3/7</span><div class="si"><div class="eye">ponto 02</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,30px)">Integração<br><em>nativa</em></div><div class="bd">Conecta ao PJe, eProc ou PROJUDI sem middleware externo?</div><div class="chips"><span class="chip">PJe</span><span class="chip">eProc</span><span class="chip">PROJUDI</span></div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">4/7</span><div class="si"><div class="eye">ponto 03</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,30px)"><em>Auditabilidade</em><br>total</div><div class="bd">Cada decisão da IA é rastreável e explicável? IA caixa-preta é inviável no setor público.</div><div class="chip" style="align-self:flex-start">Res. CNJ 332/2020</div><div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">5/7</span><div class="si"><div class="eye">ponto 04</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,30px)">Nuvem ou<br><em>on-premise?</em></div><div class="bd">O tribunal tem autonomia sobre onde os dados ficam? Soberania de dados é requisito.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">6/7</span><div class="si"><div class="eye">ponto 05</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,30px)">Suporte à<br><em>licitação</em></div><div class="bd">O fornecedor tem documentação técnica e jurídica para o processo licitatório público?</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-blue',h:`<span class="sn" style="color:rgba(255,255,255,.18)">7/7</span><div class="si"><div class="eye">a nowlex atende os 5</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(20px,4vw,32px)">Pronto para<br>a próxima<br>etapa?</div><div class="bd" style="color:rgba(255,255,255,.7)">Demonstração técnica para o seu tribunal. Sem custo. Sem compromisso.</div><div class="cta">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'004',date:'10/06 QUA',fmt:'s',boost:false,cat:'Engajamento',
+title:'Quiz: Qual sistema processual seu tribunal usa?',
+caption:`Quiz de segmentação de audiência. Cada resposta direciona o conteúdo das próximas semanas.`,
+tags:'#PJe #eProc #PROJUDI #nowlex #judiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:220px;height:220px;top:25%;right:-40px;opacity:.16"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">quiz · sistemas processuais</div><div class="sq">Qual sistema processual o seu tribunal usa?</div><div class="poll"><div class="popt">PJe</div><div class="popt">eProc</div><div class="popt">PROJUDI</div><div class="popt">Outro sistema</div></div><div style="font-size:10px;color:rgba(242,242,242,.22)">A Nowlex integra com todos — nativamente.</div></div></div>`}]},
+
+{id:'005',date:'11/06 QUI',fmt:'r',boost:true,cat:'Dados',
+title:'Antes vs Depois: 4h → 47min de triagem',
+caption:`Sem IA: servidor abre processo, lê, classifica, encaminha. Repete isso 200 vezes por dia.\n\nCom Nowlex: a IA lê, classifica e sugere encaminhamento em segundos. O servidor revisa e confirma.\n\nMesmo volume. Menos de metade do tempo.\n\nIsso não é promessa — é o que nossos clientes já operam hoje.`,
+tags:'#nowlex #IAnojudiciário #LegalTechBR #GovTechBrasil #processoeletronico',
+slides:[{t:'t-dark',h:`<div class="ba"><div class="ba-col"><div class="ba-lbl red">Sem IA</div><div class="ba-num red">4h</div><div class="ba-desc">Triagem manual de 200 processos. Servidor lê, classifica, encaminha. Repete.</div><div class="ba-foot">nowlex.ai</div></div><div class="ba-col"><div class="ba-lbl blue">Com Nowlex</div><div class="ba-num blue">47<span style="font-size:.5em;opacity:.5">min</span></div><div class="ba-desc">IA classifica e sugere. Servidor revisa e confirma. Mesmo volume.</div><div class="ba-foot" style="color:var(--blue)">mesmo volume.</div></div></div>`}]},
+
+{id:'006',date:'11/06 QUI',fmt:'s',boost:false,cat:'CTA',
+title:'Link na bio: documentação técnica',
+caption:`Story de direcionamento para o site após Reels de antes/depois. Publicar na sequência do #005.`,
+tags:'#nowlex #PJe #eProc #PROJUDI',
+slides:[{t:'t-blue',h:`<div class="blob" style="width:220px;height:220px;bottom:-30px;right:-30px;background:rgba(255,255,255,.07);filter:blur(50px)"></div><div class="si"><div class="story-c"><div class="eye" style="color:rgba(255,255,255,.55);margin-bottom:0">documentação técnica</div><div class="sq" style="color:#fff;font-size:clamp(16px,3vw,22px)">Quer entender como a Nowlex integra com o seu sistema processual?</div><div style="font-size:13px;color:rgba(255,255,255,.65);font-weight:500">Os detalhes técnicos estão na bio.</div><div style="font-size:28px">☝️</div><div class="btn-pill">nowlex.ai →</div></div></div>`}]},
+
+{id:'007',date:'12/06 SEX',fmt:'i',boost:true,cat:'Autoridade',
+title:'O CNJ quer IA em todos os tribunais',
+caption:`A estratégia nacional de transformação digital do CNJ aponta um caminho claro: IA como infraestrutura, não como experimento.\n\nTribunais que começarem agora têm vantagem competitiva na corrida por eficiência e conformidade.\n\nOs que esperarem vão correr atrás.\n\nA Nowlex já está pronta. Integração nativa, conformidade CNJ, implantação rápida.\n\nQuando seu tribunal começa?`,
+tags:'#nowlex #CNJdigital #GovTechBrasil #IAnojudiciário #transformacaodigital #inovaçãopública',
+slides:[{t:'t-ink',h:`<div class="blob" style="width:380px;height:380px;top:-80px;left:-80px;opacity:.3"></div><div class="si" style="justify-content:flex-end"><div style="flex:1;display:flex;flex-direction:column;justify-content:center"><div class="eye">estratégia nacional · CNJ</div><div class="hl">O CNJ quer<br>IA em todos<br>os tribunais.</div><div style="width:36px;height:3px;background:rgba(0,107,249,.4);border-radius:2px;margin:14px 0"></div><div class="hl" style="color:rgba(242,242,242,.26);font-size:clamp(16px,3vw,26px);letter-spacing:-.5px">Seu tribunal<br>está pronto?</div></div><div class="cta" style="font-size:12px">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'008',date:'12/06 SEX',fmt:'s',boost:false,cat:'CTA',
+title:'CTA fim de semana: agende a demo',
+caption:`CTA de encerramento de semana. Publicar às 18h de sexta.`,
+tags:'#nowlex #IAnojudiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:260px;height:260px;bottom:-40px;right:-40px;opacity:.2"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">encerramento de semana</div><div class="sq" style="font-size:clamp(17px,3.3vw,24px)">Essa semana você viu o que a IA pode fazer pelo seu tribunal.</div><div style="font-size:13px;color:rgba(242,242,242,.45);font-weight:500">Na semana que vem, veja na prática.</div><div class="btn-pill">Agendar demonstração →</div><div style="font-size:10px;color:rgba(242,242,242,.18)">nowlex.ai</div></div></div>`}]},
+
+{id:'009',date:'13/06 SÁB',fmt:'c',boost:false,cat:'Educativo',
+title:'Nuvem, On-Premise ou Híbrido?',
+caption:`A maior dúvida dos gestores de TI dos tribunais quando o assunto é IA.\n\nNuvem: rápido, custo previsível, atualizações automáticas.\nOn-Premise: soberania total dos dados, controle máximo.\nHíbrido: o melhor dos dois — e o mais adotado.\n\nA Nowlex suporta os três modelos. A decisão é sua. Salve para compartilhar com o time de TI.`,
+tags:'#nowlex #GovTechBrasil #LGPD #tribunaisdigitais #inovaçãopública #setorpúblico',
+slides:[
+{t:'t-white',h:`<span class="sn" style="color:rgba(26,26,26,.15)">1/5</span><div class="si"><div class="eye">infraestrutura · decisão técnica</div><div style="flex:1"></div><div class="hl" style="color:#1a1a1a">Nuvem ou<br><em>On-Premise?</em></div><div class="bd" style="color:rgba(26,26,26,.5)">O guia para gestores de TI de tribunais brasileiros.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-white',h:`<span class="sn" style="color:rgba(26,26,26,.15)">2/5</span><div class="si"><div class="eye">opção A</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="color:#1a1a1a;font-size:clamp(20px,4vw,34px)"><em>Nuvem</em></div><div class="cl"><div class="ci" style="color:rgba(26,26,26,.75)"><div class="cdot">✓</div>Implantação em dias, não meses</div><div class="ci" style="color:rgba(26,26,26,.75)"><div class="cdot">✓</div>Atualizações automáticas</div><div class="ci" style="color:rgba(26,26,26,.75)"><div class="cdot">✓</div>Custo previsível</div></div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-white',h:`<span class="sn" style="color:rgba(26,26,26,.15)">3/5</span><div class="si"><div class="eye">opção B</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="color:#1a1a1a;font-size:clamp(20px,4vw,34px)"><em>On-Premise</em></div><div class="cl"><div class="ci" style="color:rgba(26,26,26,.75)"><div class="cdot">✓</div>Dados dentro do tribunal</div><div class="ci" style="color:rgba(26,26,26,.75)"><div class="cdot">✓</div>Controle total de versões</div><div class="ci" style="color:rgba(26,26,26,.75)"><div class="cdot">✓</div>Customização profunda</div></div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<div class="blob" style="width:240px;height:240px;bottom:-40px;right:-40px;opacity:.3"></div><span class="sn">4/5</span><div class="si"><div class="eye">opção recomendada</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(20px,4vw,32px)">Modelo<br><em>Híbrido</em></div><div class="bd">O melhor dos dois. Processamento em nuvem, dados sensíveis dentro do tribunal.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-blue',h:`<span class="sn" style="color:rgba(255,255,255,.16)">5/5</span><div class="si"><div class="eye">a nowlex suporta os três</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(20px,4vw,32px)">A decisão<br>é sua.<br>A IA é nossa.</div><div class="cta">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'010',date:'16/06 SEG',fmt:'i',boost:true,cat:'Dados',
+title:'60% de redução no tempo de triagem',
+caption:`Classificar processos manualmente é uma das tarefas mais repetitivas do fluxo judicial.\n\nCom IA integrada ao PJe e eProc, servidores relatam redução de até 60% no tempo de triagem — sem perda de qualidade e com rastreabilidade total de cada decisão.\n\nIsso não é promessa. É o que já acontece nos tribunais que operam com Nowlex.\n\nMenos triagem manual. Mais tempo para o que importa.`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #PJe #processoeletronico',
+slides:[{t:'t-ink',h:`<div class="blob" style="width:340px;height:340px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.14"></div><div class="si" style="align-items:center;text-align:center;justify-content:center"><div class="eye" style="text-align:center;margin-bottom:18px">dado de impacto · triagem processual</div><div class="stat-n" style="font-size:clamp(70px,14vw,100px)">60<span style="font-size:.32em;color:rgba(0,107,249,.5)">%</span></div><div style="width:36px;height:2px;background:rgba(0,107,249,.35);border-radius:2px;margin:12px auto"></div><div style="font-size:12px;font-weight:600;color:rgba(242,242,242,.38);line-height:1.5;max-width:220px">de redução no tempo de triagem processual com IA integrada ao PJe e eProc</div><div class="wm" style="margin-top:24px;text-align:center">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'011',date:'16/06 SEG',fmt:'s',boost:false,cat:'Engajamento',
+title:'Poll: Maior gargalo do seu tribunal',
+caption:`Poll estratégico — mapeia dores prioritárias. Orienta o conteúdo das próximas semanas.`,
+tags:'#nowlex #judiciário #servidorpúblico #IAnojudiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:200px;height:200px;top:20%;left:-40px;opacity:.16"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">pesquisa · gargalos</div><div class="sq">Qual é o maior gargalo do seu tribunal hoje?</div><div class="poll"><div class="popt">Triagem de processos</div><div class="popt">Elaboração de despachos</div><div class="popt">Pesquisa jurisprudencial</div><div class="popt">Gestão de prazos</div></div><div style="font-size:10px;color:rgba(242,242,242,.2)">A Nowlex atua em todos esses pontos.</div></div></div>`}]},
+
+{id:'012',date:'17/06 TER',fmt:'r',boost:true,cat:'Produto',
+title:'Análise semântica de petição em tempo real',
+caption:`Em 45 segundos, veja o que acontece quando uma petição entra no sistema com a Nowlex ativa.\n\nA IA identifica o tipo de peça, extrai os pontos centrais, classifica a urgência e sugere o encaminhamento correto — antes do servidor abrir o documento.\n\nIntegração nativa com PJe. Zero retrabalho. Rastreabilidade total.`,
+tags:'#nowlex #IAnojudiciário #LegalTechBR #PJe #GovTechBrasil',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:260px;height:260px;top:-50px;right:-50px;opacity:.3"></div><div class="si"><div class="eye">funcionalidade · análise semântica</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px"><div style="background:rgba(0,107,249,.08);border:1px solid rgba(0,107,249,.2);border-radius:7px;padding:12px 14px"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:rgba(0,107,249,.65);text-transform:uppercase;margin-bottom:6px">petição recebida</div><div style="font-size:11px;color:rgba(242,242,242,.45);line-height:1.5">"Requerimento de alvará de soltura c/c pedido de liberdade provisória..."</div></div><div style="display:flex;align-items:center;gap:6px;padding:0 2px"><div style="flex:1;height:1px;background:rgba(0,107,249,.18)"></div><div style="font-size:9px;color:var(--blue);font-weight:700">IA Nowlex</div><div style="flex:1;height:1px;background:rgba(0,107,249,.18)"></div></div><div style="background:rgba(0,107,249,.14);border:1px solid rgba(0,107,249,.32);border-radius:7px;padding:12px 14px"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--blue);text-transform:uppercase;margin-bottom:6px">classificado automaticamente</div><div class="chips" style="margin-bottom:0"><span class="chip">Liberdade Provisória</span><span class="chip">Urgente</span><span class="chip">Criminal</span></div></div></div><div class="bd" style="font-size:10px;margin-bottom:0;margin-top:10px">Em segundos. Com rastreabilidade total. Integrado ao PJe.</div><div class="wm" style="margin-top:10px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'013',date:'17/06 TER',fmt:'s',boost:false,cat:'Prova Social',
+title:'Depoimento: analista judiciário',
+caption:`Depoimento anônimo de servidor. Publicar junto ao Reels #012 para reforçar com prova social.`,
+tags:'#nowlex #servidorpúblico #judiciário #IAnojudiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:220px;height:220px;top:40%;left:-50px;opacity:.13"></div><div class="si"><div class="story-c"><div style="font-size:44px;color:var(--blue);font-weight:900;line-height:.8;align-self:flex-start">"</div><div class="sq" style="font-size:clamp(14px,2.8vw,20px);font-style:italic;font-weight:600;text-align:left;color:rgba(242,242,242,.82)">Antes eu passava a manhã toda classificando processos. Agora reviso o que a IA já organizou. Mudou meu dia.</div><div style="align-self:flex-start"><div style="font-size:10px;font-weight:700;color:var(--blue)">Analista Judiciário</div><div style="font-size:9px;color:rgba(242,242,242,.28)">Tribunal de Justiça</div></div><div style="width:100%;height:1px;background:rgba(255,255,255,.05)"></div><div style="font-size:10px;color:rgba(242,242,242,.18);align-self:flex-end">nowlex.ai</div></div></div>`}]},
+
+{id:'014',date:'18/06 QUA',fmt:'c',boost:true,cat:'Caso',
+title:'90 dias: backlog reduzido com IA',
+caption:`Não vamos revelar o nome — mas os números são reais.\n\n40 mil processos parados na fila de triagem. Equipe sobrecarregada.\n\nA Nowlex foi implantada sem trocar o sistema processual e sem parar o fluxo.\n\nSemana 1: parametrização.\nSemana 4: IA operando em 100% dos novos processos.\nDia 90: 78% dos casos com triagem automatizada. Equipe realocada.\n\nSeu tribunal pode ser o próximo. nowlex.ai`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil #tribunaisdigitais #LegalTechBR #inovaçãopública',
+slides:[
+{t:'t-ink',h:`<div class="blob" style="width:280px;height:280px;bottom:-50px;left:-50px;opacity:.4"></div><span class="sn">1/6</span><div class="si"><div class="eye">caso real · implantação</div><div style="flex:1"></div><div class="stat-n" style="font-size:clamp(48px,10vw,76px)">90</div><div class="stat-l" style="margin-bottom:16px">dias. Backlog reduzido.<br>IA funcionando.</div><div class="bd" style="font-size:11px;margin-bottom:0;color:rgba(242,242,242,.3)">Os números são reais.</div><div class="wm" style="margin-top:16px">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">2/6</span><div class="si"><div class="eye">o problema</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)"><em>40 mil</em> processos<br>parados na fila.</div><div class="bd">Equipe sobrecarregada. Triagem manual consumindo horas de trabalho qualificado por dia.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">3/6</span><div class="si"><div class="eye">a solução</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)">Nowlex integrada<br>ao sistema<br><em>existente.</em></div><div class="bd">Sem trocar o sistema processual. Sem parar o fluxo. Implantação paralela.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">4/6</span><div class="si"><div class="eye">linha do tempo</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px"><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0">S1</div><div style="font-size:11px;color:rgba(242,242,242,.6)">Onboarding e parametrização. Fluxo intacto.</div></div><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,107,249,.4);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0">S4</div><div style="font-size:11px;color:rgba(242,242,242,.6)">IA em 100% dos novos processos.</div></div><div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,107,249,.2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0">D90</div><div style="font-size:11px;color:rgba(242,242,242,.6)">78% dos casos com triagem automatizada.</div></div></div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">5/6</span><div class="si"><div class="eye">resultado · dia 90</div><div style="flex:1"></div><div class="stat-n" style="font-size:clamp(48px,10vw,76px)">78<span style="font-size:.42em;color:rgba(0,107,249,.45)">%</span></div><div class="stat-l" style="margin-bottom:14px">dos casos com triagem automatizada</div><div class="bd" style="font-size:11px;margin-bottom:0">Equipe realocada para tarefas de maior valor jurídico.</div><div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div></div>`},
+{t:'t-blue',h:`<span class="sn" style="color:rgba(255,255,255,.16)">6/6</span><div class="si"><div class="eye">seu tribunal pode ser o próximo</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(20px,4vw,32px)">Começa com<br>uma conversa<br>de 45 minutos.</div><div class="cta">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'015',date:'18/06 QUA',fmt:'s',boost:false,cat:'Governança',
+title:'Checklist LGPD para IA no judiciário',
+caption:`Checklist de conformidade LGPD para IA no judiciário. A Nowlex cumpre todos os 6 pontos por design.`,
+tags:'#LGPD #nowlex #CNJdigital #GovTechBrasil #judiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:200px;height:200px;top:10%;right:-35px;opacity:.14"></div><div class="si" style="padding:24px 28px"><div class="eye" style="margin-bottom:14px">checklist · lgpd no judiciário</div><div class="cl" style="flex:1;justify-content:center"><div class="ci"><div class="cdot">✓</div>Dados processados em território nacional</div><div class="ci"><div class="cdot">✓</div>Logs de auditoria completos</div><div class="ci"><div class="cdot">✓</div>Base legal definida por tratamento</div><div class="ci"><div class="cdot">✓</div>RIPD elaborado e atualizado</div><div class="ci"><div class="cdot">✓</div>DPO indicado formalmente</div><div class="ci"><div class="cdot">✓</div>Contrato com cláusulas LGPD</div></div><div style="font-size:10px;color:rgba(242,242,242,.25);margin-top:10px">A Nowlex cumpre todos esses pontos.</div><div class="wm" style="margin-top:8px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'016',date:'19/06 QUI',fmt:'r',boost:true,cat:'Educativo',
+title:'IA genérica vs IA jurídica',
+caption:`Muita gente ainda confunde IA genérica com IA jurídica. São mundos completamente diferentes.\n\nIA genérica: treinada para tudo, especialista em nada.\nIA jurídica: treinada com linguagem processual, normas CNJ, fluxos do judiciário brasileiro.\n\nA Nowlex entende o que é uma petição inicial, um despacho de mero expediente, uma sentença de mérito — sem precisar de explicação.`,
+tags:'#nowlex #IAnojudiciário #LegalTechBR #GovTechBrasil #direitoetecnologia',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:240px;height:240px;top:-40px;right:-40px;opacity:.28"></div><div class="si"><div class="eye">ia genérica vs ia jurídica</div><div style="flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center"><div style="background:rgba(255,85,85,.06);border:1px solid rgba(255,85,85,.18);border-radius:7px;padding:14px"><div style="font-size:9px;font-weight:700;color:rgba(255,85,85,.65);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">IA Genérica</div><div style="font-size:11px;color:rgba(242,242,242,.45);line-height:1.55">Treinada para tudo. Especialista em nada. Não sabe o que é um "despacho de mero expediente".</div></div><div style="display:flex;justify-content:center;padding:2px 0"><div style="font-size:9px;font-weight:800;color:var(--blue);letter-spacing:1px">NOWLEX</div></div><div style="background:rgba(0,107,249,.1);border:1px solid rgba(0,107,249,.28);border-radius:7px;padding:14px"><div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">IA Jurídica</div><div style="font-size:11px;color:rgba(242,242,242,.62);line-height:1.55">Treinada com linguagem processual, normas CNJ e fluxos do judiciário. Entende o contexto.</div></div></div><div class="wm" style="margin-top:14px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'017',date:'19/06 QUI',fmt:'s',boost:false,cat:'Conteúdo',
+title:'Leitura da semana: guia de integração',
+caption:`Story direcionando para conteúdo técnico do site. Adaptar título ao artigo mais recente.`,
+tags:'#nowlex #PJe #IAnojudiciário #GovTechBrasil',
+slides:[{t:'t-blue',h:`<div class="blob" style="width:200px;height:200px;bottom:-25px;left:-25px;background:rgba(255,255,255,.07);filter:blur(40px)"></div><div class="si"><div class="story-c"><div class="eye" style="color:rgba(255,255,255,.55);margin-bottom:0">leitura da semana</div><div class="sq" style="color:#fff;font-size:clamp(15px,3vw,21px)">"Guia completo de integração Nowlex + PJe"</div><div style="font-size:12px;color:rgba(255,255,255,.6);font-weight:500">Para quem quer entender antes de contratar.</div><div style="font-size:28px">☝️</div><div class="btn-pill">Leia na bio →</div></div></div>`}]},
+
+{id:'018',date:'20/06 SEX',fmt:'c',boost:true,cat:'Institucional',
+title:'Como contratar IA via licitação pública',
+caption:`A maior dúvida dos gestores: "Como contrato IA dentro das regras do setor público?"\n\nA Lei 14.133/21 (Nova Lei de Licitações) mapeou o caminho. A Nowlex tem documentação técnica e jurídica pronta para apoiar o processo licitatório do seu tribunal.\n\nPregão eletrônico, dispensa ou inexigibilidade — a modalidade certa depende do perfil do tribunal.\n\nSalve e encaminhe para o setor jurídico.`,
+tags:'#nowlex #GovTechBrasil #setorpúblico #inovaçãopública #IAnojudiciário #licitacao',
+slides:[
+{t:'t-white',h:`<span class="sn" style="color:rgba(26,26,26,.14)">1/6</span><div class="si"><div class="eye">contratação pública · lei 14.133/21</div><div style="flex:1"></div><div class="hl" style="color:#1a1a1a">Como contratar<br>IA para o<br><em>tribunal</em></div><div class="bd" style="color:rgba(26,26,26,.5)">Da licitação ao sistema em ar. O guia prático para o setor público.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-white',h:`<span class="sn" style="color:rgba(26,26,26,.14)">2/6</span><div class="si"><div class="eye">marco legal</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="color:#1a1a1a;font-size:clamp(18px,3.5vw,30px)">Lei <em>14.133/21</em></div><div class="bd" style="color:rgba(26,26,26,.52)">A Nova Lei de Licitações abre caminhos claros para contratação de soluções de IA no setor público.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-white',h:`<span class="sn" style="color:rgba(26,26,26,.14)">3/6</span><div class="si"><div class="eye">modalidades</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="color:#1a1a1a;font-size:clamp(18px,3.5vw,28px)">Qual<br><em>modalidade</em><br>usar?</div><div class="cl"><div class="ci" style="color:rgba(26,26,26,.68)"><div class="cdot">→</div>Pregão eletrônico — mais comum</div><div class="ci" style="color:rgba(26,26,26,.68)"><div class="cdot">→</div>Dispensa — valores específicos</div><div class="ci" style="color:rgba(26,26,26,.68)"><div class="cdot">→</div>Inexigibilidade — solução exclusiva</div></div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">4/6</span><div class="si"><div class="eye">termo de referência</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)">O que o <em>TR</em><br>precisa ter</div><div class="cl"><div class="ci"><div class="cdot">✓</div>Especificação técnica da integração</div><div class="ci"><div class="cdot">✓</div>Requisitos de segurança e LGPD</div><div class="ci"><div class="cdot">✓</div>SLA de suporte e manutenção</div><div class="ci"><div class="cdot">✓</div>Cláusulas de auditabilidade CNJ</div></div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">5/6</span><div class="si"><div class="eye">due diligence</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,26px)"><em>Due diligence</em><br>técnica</div><div class="bd">Integração nativa, conformidade LGPD, suporte pós-implantação e documentação para auditoria CNJ.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-blue',h:`<span class="sn" style="color:rgba(255,255,255,.16)">6/6</span><div class="si"><div class="eye">nowlex apoia o processo licitatório</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(20px,4vw,32px)">Documentação<br>pronta para o<br><em>seu tribunal.</em></div><div class="cta">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'019',date:'20/06 SEX',fmt:'s',boost:false,cat:'CTA',
+title:'CTA encerramento semana 2',
+caption:`CTA de encerramento da segunda semana. Lead já viu checklist, caso real, antes/depois e guia de licitação. Hora de converter.`,
+tags:'#nowlex #IAnojudiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:260px;height:260px;bottom:-40px;right:-40px;opacity:.18"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">semana 2 encerrada</div><div class="sq" style="font-size:clamp(16px,3.2vw,22px)">Você já sabe como contratar. O próximo passo é uma conversa.</div><div style="font-size:12px;color:rgba(242,242,242,.4);font-weight:500">45 minutos. Técnico. Sem enrolação.</div><div class="btn-pill">Agendar agora →</div><div style="font-size:10px;color:rgba(242,242,242,.16)">nowlex.ai</div></div></div>`}]},
+
+{id:'020',date:'21/06 SÁB',fmt:'i',boost:false,cat:'Educativo',
+title:'3 perguntas: seu tribunal está pronto para IA?',
+caption:`Antes de qualquer contratação, um gestor precisa responder a três perguntas fundamentais.\n\n1. O sistema processual tem API aberta ou integração documentada?\n2. A equipe de TI consegue supervisionar uma solução de IA em produção?\n3. Existe política de governança de dados alinhada à LGPD?\n\n3 "sim" = pronto. Ainda não? A Nowlex ajuda em ambos os casos.\n\nSalve para a próxima reunião de planejamento.`,
+tags:'#nowlex #GovTechBrasil #LGPD #tribunaisdigitais #inovaçãopública #CNJdigital',
+slides:[{t:'t-white',h:`<div class="si" style="padding:24px 28px"><div class="eye" style="margin-bottom:12px">diagnóstico rápido · prontidão</div><div class="hl" style="color:#1a1a1a;font-size:clamp(16px,3vw,24px);margin-bottom:16px">3 perguntas para saber se seu tribunal está pronto para IA.</div><div class="cl" style="flex:1;justify-content:center;gap:10px"><div class="ci" style="color:rgba(26,26,26,.72)"><div class="cdot">1</div><div>O sistema processual tem API aberta ou integração documentada?</div></div><div class="ci" style="color:rgba(26,26,26,.72)"><div class="cdot">2</div><div>A equipe de TI consegue supervisionar uma solução de IA em produção?</div></div><div class="ci" style="color:rgba(26,26,26,.72)"><div class="cdot">3</div><div>Existe política de governança de dados alinhada à LGPD?</div></div></div><div style="font-size:10px;color:rgba(26,26,26,.3);margin-top:14px;line-height:1.5">3 "sim" = pronto. Ainda não? A Nowlex ajuda em ambos.</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'021',date:'23/06 SEG',fmt:'c',boost:true,cat:'Dados',
+title:'ROI: o que 6 meses de IA fazem pelo tribunal',
+caption:`Gestores precisam de números. Aqui estão.\n\nTriagem manual tem custo real — horas de trabalho qualificado alocadas em tarefa repetitiva.\n\nCom Nowlex: 60% menos tempo em triagem. 78% dos casos automatizados em 90 dias. Servidores realocados para análise e instrução.\n\nConformidade LGPD por design evita retrabalho e multas.\n\nO retorno começa antes do fim do primeiro trimestre. Quer o cálculo para o perfil do seu tribunal? nowlex.ai`,
+tags:'#nowlex #GovTechBrasil #IAnojudiciário #setorpúblico #inovaçãopública #LegalTechBR',
+slides:[
+{t:'t-ink',h:`<div class="blob" style="width:280px;height:280px;top:-50px;right:-50px;opacity:.38"></div><span class="sn">1/6</span><div class="si"><div class="eye">roi · 6 meses</div><div style="flex:1"></div><div class="hl">O que 6 meses<br>de IA fazem pelo<br><em>orçamento</em><br>do seu tribunal.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">2/6</span><div class="si"><div class="eye">o custo invisível</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)">Triagem manual<br>tem <em>custo real.</em></div><div class="bd">Horas de trabalho qualificado em classificação repetitiva. Dinheiro público mal aplicado.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">3/6</span><div class="si"><div class="eye">com nowlex</div><div style="flex:1"></div><div class="two-stat"><div class="ts-box"><div class="ts-n">60<span style="font-size:.45em;opacity:.55">%</span></div><div class="ts-l">menos tempo em triagem</div></div><div class="ts-box"><div class="ts-n">78<span style="font-size:.45em;opacity:.55">%</span></div><div class="ts-l">dos casos automatizados em 90d</div></div></div><div class="bd" style="font-size:11px;margin-bottom:0">Servidores realocados para análise e instrução.</div><div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">4/6</span><div class="si"><div class="eye">menos erros</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)">Erros custam<br><em>caro.</em></div><div class="bd">Processos mal classificados geram recursos, retrabalho e risco de nulidade. A IA classifica com critérios consistentes.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">5/6</span><div class="si"><div class="eye">conformidade evita multas</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)"><em>LGPD</em> não<br>é opcional.</div><div class="bd">Adequação reativa custa mais do que conformidade por design. A Nowlex já nasce dentro das normas.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-blue',h:`<span class="sn" style="color:rgba(255,255,255,.16)">6/6</span><div class="si"><div class="eye">o retorno começa antes do trimestre</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(20px,4vw,30px)">Quer o cálculo<br>para o perfil<br><em>do seu tribunal?</em></div><div class="cta">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'022',date:'23/06 SEG',fmt:'s',boost:false,cat:'Engajamento',
+title:'Poll: Tribunal tem projeto de IA?',
+caption:`Mapeamento de maturidade digital. Quem votou "Não ainda" recebe DM com conteúdo de iniciação.`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:220px;height:220px;top:40%;right:-50px;opacity:.15"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">mapeamento · maturidade digital</div><div class="sq">Seu tribunal já tem algum projeto de IA em andamento?</div><div class="poll"><div class="popt">Sim, já em uso</div><div class="popt">Sim, em planejamento</div><div class="popt">Não ainda</div><div class="popt">Não sei informar</div></div><div style="font-size:10px;color:rgba(242,242,242,.18)">Podemos ser o ponto de partida. nowlex.ai</div></div></div>`}]},
+
+{id:'023',date:'24/06 TER',fmt:'r',boost:true,cat:'Bastidores',
+title:'Como a Nowlex treina sua IA com linguagem jurídica',
+caption:`IA genérica não entende "despacho de mero expediente". A nossa entende.\n\nVeja nos bastidores como o time da Nowlex alimenta e valida o modelo com linguagem processual real — sem expor dados de clientes, sem atalhos.\n\nEsse é o trabalho invisível que faz toda a diferença quando a IA precisa classificar uma petição com 200 processos na fila.`,
+tags:'#nowlex #IAnojudiciário #LegalTechBR #GovTechBrasil #direitoetecnologia',
+slides:[{t:'t-ink',h:`<div class="blob" style="width:260px;height:260px;bottom:-40px;left:-40px;opacity:.32"></div><div class="si"><div class="eye">bastidores · treinamento do modelo</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px"><div class="hl" style="font-size:clamp(16px,3.2vw,26px);margin-bottom:0">IA genérica não<br>entende <em>"despacho<br>de mero expediente".</em><br>A nossa entende.</div><div style="background:rgba(0,107,249,.08);border:1px solid rgba(0,107,249,.2);border-radius:7px;padding:12px 14px"><div style="font-size:8px;font-weight:700;letter-spacing:1.5px;color:rgba(0,107,249,.65);text-transform:uppercase;margin-bottom:6px">como treinamos</div><div class="cl" style="gap:6px;margin-bottom:0"><div class="ci" style="font-size:10px"><div class="cdot" style="width:13px;height:13px;font-size:7px">1</div>Curadoria de linguagem processual real</div><div class="ci" style="font-size:10px"><div class="cdot" style="width:13px;height:13px;font-size:7px">2</div>Validação por especialistas jurídicos</div><div class="ci" style="font-size:10px"><div class="cdot" style="width:13px;height:13px;font-size:7px">3</div>Zero exposição de dados de clientes</div></div></div></div><div class="wm" style="margin-top:14px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'024',date:'24/06 TER',fmt:'s',boost:false,cat:'Prova Social',
+title:'Depoimento: gestor de TI que era cético',
+caption:`Depoimento anônimo de gestor de TI — perfil decisor. Publicar após Reels #023.`,
+tags:'#nowlex #GovTechBrasil #IAnojudiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:200px;height:200px;top:30%;left:-40px;opacity:.13"></div><div class="si"><div class="story-c"><div style="font-size:44px;color:var(--blue);font-weight:900;line-height:.8;align-self:flex-start">"</div><div class="sq" style="font-size:clamp(13px,2.6vw,18px);font-style:italic;font-weight:600;text-align:left;color:rgba(242,242,242,.8)">Eu era cético. Achava que IA era marketing. Depois da primeira semana com Nowlex em produção, entendi que era infraestrutura.</div><div style="align-self:flex-start"><div style="font-size:10px;font-weight:700;color:var(--blue)">Coordenador de TI</div><div style="font-size:9px;color:rgba(242,242,242,.26)">Tribunal Regional Federal</div></div><div style="font-size:10px;color:rgba(242,242,242,.16);align-self:flex-end">nowlex.ai</div></div></div>`}]},
+
+{id:'025',date:'25/06 QUA',fmt:'i',boost:true,cat:'CTA',
+title:'Demonstração institucional: 45 minutos',
+caption:`Sem compromisso. Sem conversa de vendas.\n\nUma sessão técnica de 45 minutos onde você vê a Nowlex funcionando no fluxo processual do seu tribunal — com perguntas abertas para o time de engenharia.\n\nDisponível para TJs, TRFs, TRTs, Ministérios Públicos, Defensorias e Procuradorias.\n\nO próximo passo é uma conversa. O que vem depois é decisão sua.`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR',
+slides:[{t:'t-blue',h:`<div class="blob" style="width:300px;height:300px;top:-60px;left:-60px;background:rgba(255,255,255,.06);filter:blur(60px)"></div><div class="si" style="justify-content:center"><div class="eye" style="margin-bottom:28px;color:rgba(255,255,255,.52)">demonstração institucional</div><div class="hl" style="font-size:clamp(24px,4.8vw,40px)">45 minutos.<br>Técnico.<br>Sem enrolação.</div><div class="bd" style="color:rgba(255,255,255,.62);margin-bottom:20px">Para TJs, TRFs, TRTs, MPs, Defensorias e Procuradorias. Sem custo.</div><div style="font-size:13px;font-weight:800;color:#fff;background:rgba(255,255,255,.15);padding:11px 22px;border-radius:28px;display:inline-block">nowlex.ai →</div><div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'026',date:'25/06 QUA',fmt:'s',boost:false,cat:'Educativo',
+title:'IA explicável vs caixa-preta',
+caption:`Story educativo sobre conceito técnico crítico. IA explicável é requisito da Resolução CNJ 332/2020.`,
+tags:'#nowlex #CNJdigital #LGPD #IAnojudiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:200px;height:200px;top:15%;right:-35px;opacity:.13"></div><div class="si" style="padding:26px 28px"><div class="eye" style="margin-bottom:16px">conceito técnico · auditabilidade</div><div style="display:flex;flex-direction:column;gap:10px;flex:1;justify-content:center"><div style="background:rgba(255,85,85,.06);border:1px solid rgba(255,85,85,.18);border-radius:7px;padding:12px"><div style="font-size:8px;font-weight:700;color:rgba(255,100,100,.65);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">IA Caixa-Preta</div><div style="font-size:11px;color:rgba(242,242,242,.45);line-height:1.5">Decide sem explicar. Impossível auditar. Inviável no setor público.</div></div><div style="background:rgba(0,107,249,.1);border:1px solid rgba(0,107,249,.26);border-radius:7px;padding:12px"><div style="font-size:8px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">IA Explicável — Nowlex</div><div style="font-size:11px;color:rgba(242,242,242,.62);line-height:1.5">Cada decisão tem rastreabilidade e justificativa. Auditável pelo CNJ.</div></div></div><div style="font-size:10px;color:rgba(242,242,242,.22);margin-top:12px">Res. CNJ 332/2020 exige isso. nowlex.ai</div></div>`}]},
+
+{id:'027',date:'26/06 QUI',fmt:'r',boost:false,cat:'Educativo',
+title:'Análise semântica jurídica explicada',
+caption:`Análise semântica é a capacidade da IA de entender o significado do texto, não apenas as palavras.\n\nNo contexto jurídico: identificar que "requerimento de alvará de soltura" e "pedido de liberdade provisória" são a mesma coisa — mesmo escritos de formas completamente diferentes.\n\nIsso é o que separa a Nowlex de um buscador sofisticado.`,
+tags:'#nowlex #IAnojudiciário #LegalTechBR #direitoetecnologia #GovTechBrasil',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:240px;height:240px;top:-40px;right:-40px;opacity:.26"></div><div class="si"><div class="eye">educativo · análise semântica</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px"><div class="hl" style="font-size:clamp(16px,3.2vw,26px);margin-bottom:0">Análise semântica<br><em>jurídica:</em> o que é?</div><div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:12px 14px"><div style="font-size:9px;font-weight:700;color:rgba(242,242,242,.28);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">texto A</div><div style="font-size:11px;color:rgba(242,242,242,.5)">"Requerimento de alvará de soltura..."</div></div><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:1px;background:rgba(0,107,249,.18)"></div><div style="font-size:8px;font-weight:800;color:var(--blue);letter-spacing:1px">MESMO SIGNIFICADO</div><div style="flex:1;height:1px;background:rgba(0,107,249,.18)"></div></div><div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:12px 14px"><div style="font-size:9px;font-weight:700;color:rgba(242,242,242,.28);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">texto B</div><div style="font-size:11px;color:rgba(242,242,242,.5)">"Pedido de liberdade provisória mediante fiança..."</div></div><div style="background:rgba(0,107,249,.12);border:1px solid rgba(0,107,249,.28);border-radius:5px;padding:8px 12px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--blue)">Nowlex classifica os dois corretamente.</div></div></div><div class="wm" style="margin-top:12px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'028',date:'26/06 QUI',fmt:'s',boost:false,cat:'Conteúdo',
+title:'Novo no blog: como a análise semântica funciona',
+caption:`Story direcionando para conteúdo técnico. Complementa o Reels #027.`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR',
+slides:[{t:'t-blue',h:`<div class="blob" style="width:180px;height:180px;bottom:-20px;left:-20px;background:rgba(255,255,255,.07);filter:blur(40px)"></div><div class="si"><div class="story-c"><div class="eye" style="color:rgba(255,255,255,.52);margin-bottom:0">novo no blog</div><div class="sq" style="color:#fff;font-size:clamp(14px,2.8vw,20px)">"Como a análise semântica jurídica funciona na prática"</div><div style="font-size:12px;color:rgba(255,255,255,.6);font-weight:500">Artigo técnico para quem quer entender antes de contratar.</div><div style="font-size:26px">☝️</div><div class="btn-pill">Leia na bio →</div></div></div>`}]},
+
+{id:'029',date:'27/06 SEX',fmt:'c',boost:true,cat:'Autoridade',
+title:'O que os tribunais líderes em IA fizeram primeiro',
+caption:`O que separa os tribunais que avançaram em IA dos que ainda estão na estaca zero?\n\n1 — Mapearam os fluxos com maior volume e menor valor agregado\n2 — Escolheram integração nativa — não adaptações genéricas\n3 — Envolveram TI desde a homologação\n4 — Definiram KPIs antes de implantar\n5 — Começaram pequeno, validaram, escalaram\n\nEsse é o método. A Nowlex foi construída para ele. nowlex.ai`,
+tags:'#nowlex #GovTechBrasil #IAnojudiciário #tribunaisdigitais #inovaçãopública #LegalTechBR',
+slides:[
+{t:'t-ink',h:`<div class="blob" style="width:260px;height:260px;top:-40px;right:-40px;opacity:.38"></div><span class="sn">1/6</span><div class="si"><div class="eye">boas práticas · tribunais líderes</div><div style="flex:1"></div><div class="hl">O que os<br>tribunais líderes<br>em <em>IA</em> fizeram<br>primeiro.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">2/6</span><div class="si"><div class="eye">passo 01</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)">Mapearam os<br><em>fluxos certos.</em></div><div class="bd">Identificaram processos com maior volume e menor valor agregado: triagem, classificação, distribuição.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">3/6</span><div class="si"><div class="eye">passo 02</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)">Escolheram<br><em>integração nativa.</em></div><div class="bd">Não adaptaram ferramentas genéricas. Contrataram solução construída para o judiciário.</div><div class="chips"><span class="chip">PJe</span><span class="chip">eProc</span><span class="chip">PROJUDI</span></div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">4/6</span><div class="si"><div class="eye">passo 03</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,26px)">Definiram<br><em>KPIs antes</em><br>da implantação.</div><div class="bd">Tempo de triagem, taxa de erros, volume por servidor, conformidade CNJ. Sem meta, não há resultado.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">5/6</span><div class="si"><div class="eye">passo 04</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,26px)">Começaram<br>pequeno.<br><em>Validaram. Escalaram.</em></div><div class="bd">Piloto em uma vara. Validação com dados reais. Ajustes finos. Depois, escala para todo o tribunal.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-blue',h:`<span class="sn" style="color:rgba(255,255,255,.16)">6/6</span><div class="si"><div class="eye">a nowlex foi construída para esse método</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(20px,4vw,32px)">Comece pelo<br>passo certo.<br><em>Agora.</em></div><div class="cta">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'030',date:'27/06 SEX',fmt:'s',boost:false,cat:'CTA',
+title:'Encerramento semana 3',
+caption:`CTA de encerramento da semana 3. Lead já viu ROI, bastidores, análise semântica e boas práticas.`,
+tags:'#nowlex #IAnojudiciário',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:240px;height:240px;bottom:-40px;right:-40px;opacity:.16"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">3 semanas de conteúdo</div><div class="sq" style="font-size:clamp(16px,3.2vw,22px)">Você já sabe tudo que precisa para tomar a decisão.</div><div style="font-size:12px;color:rgba(242,242,242,.38);font-weight:500">Falta só uma conversa.</div><div class="btn-pill">nowlex.ai/demo →</div><div style="font-size:10px;color:rgba(242,242,242,.16)">45 minutos. Técnico. Sem custo.</div></div></div>`}]},
+
+{id:'031',date:'28/06 SÁB',fmt:'i',boost:false,cat:'Educativo',
+title:'Glossário: 6 termos de IA que todo gestor precisa',
+caption:`Para quem ainda está se familiarizando com o vocabulário de IA aplicada ao direito.\n\nNLP · Semântica · OCR Jurídico · Workflow automatizado · IA Explicável · On-Premise\n\nSalve para consultar quando precisar — e compartilhe com quem está avaliando soluções de IA para o tribunal.`,
+tags:'#nowlex #IAnojudiciário #LegalTechBR #direitoetecnologia #GovTechBrasil',
+slides:[{t:'t-white',h:`<div class="si" style="padding:22px 26px"><div class="eye" style="margin-bottom:12px">glossário · ia no judiciário</div><div class="hl" style="color:#1a1a1a;font-size:clamp(14px,2.8vw,22px);margin-bottom:14px">6 termos que<br>todo gestor<br>precisa conhecer.</div><div class="cl" style="flex:1;justify-content:center;gap:7px"><div class="ci" style="color:rgba(26,26,26,.72);font-size:10px"><div class="cdot" style="font-size:7px">1</div><div><strong style="color:#1a1a1a">NLP</strong> — processamento de linguagem natural</div></div><div class="ci" style="color:rgba(26,26,26,.72);font-size:10px"><div class="cdot" style="font-size:7px">2</div><div><strong style="color:#1a1a1a">Semântica</strong> — entender o significado, não só as palavras</div></div><div class="ci" style="color:rgba(26,26,26,.72);font-size:10px"><div class="cdot" style="font-size:7px">3</div><div><strong style="color:#1a1a1a">OCR Jurídico</strong> — digitalização inteligente de documentos físicos</div></div><div class="ci" style="color:rgba(26,26,26,.72);font-size:10px"><div class="cdot" style="font-size:7px">4</div><div><strong style="color:#1a1a1a">Workflow automatizado</strong> — fluxo com decisões parcialmente autônomas</div></div><div class="ci" style="color:rgba(26,26,26,.72);font-size:10px"><div class="cdot" style="font-size:7px">5</div><div><strong style="color:#1a1a1a">IA Explicável</strong> — cada classificação tem justificativa auditável</div></div><div class="ci" style="color:rgba(26,26,26,.72);font-size:10px"><div class="cdot" style="font-size:7px">6</div><div><strong style="color:#1a1a1a">On-Premise</strong> — IA dentro da infraestrutura do tribunal</div></div></div><div class="wm" style="margin-top:8px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'032',date:'30/06 SEG',fmt:'i',boost:true,cat:'Institucional',
+title:'Junho encerrado: confiança é o novo diferencial',
+caption:`Um mês de conteúdo sobre IA e judiciário — e uma certeza ficou mais clara do que nunca.\n\nO maior obstáculo para a adoção de IA nos tribunais não é tecnologia. É confiança.\n\nConfiança de que a solução vai funcionar no fluxo real. De que os dados estarão seguros. De que haverá suporte quando algo der errado.\n\nÉ por isso que a Nowlex não vende software. Vende resultado com responsabilidade.\n\nJulho começa amanhã. O que você quer ver por aqui?`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #reflexão',
+slides:[{t:'t-ink',h:`<div class="blob" style="width:360px;height:360px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.18"></div><div class="si" style="align-items:center;text-align:center;justify-content:center"><div class="eye" style="text-align:center;margin-bottom:20px">junho 2026 · encerramento</div><div class="hl" style="font-size:clamp(18px,3.8vw,32px);text-align:center">O maior obstáculo<br>para a IA nos tribunais<br>não é <em>tecnologia.</em></div><div style="width:32px;height:2px;background:rgba(0,107,249,.38);border-radius:2px;margin:16px auto"></div><div style="font-size:13px;color:rgba(242,242,242,.3);line-height:1.6;max-width:260px">É confiança. E confiança se constrói com resultado.</div><div class="wm" style="text-align:center;margin-top:28px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'033',date:'30/06 SEG',fmt:'s',boost:false,cat:'Engajamento',
+title:'Caixa de perguntas: dúvidas sobre IA no judiciário',
+caption:`Story de caixa de perguntas — ativar funcionalidade nativa do Instagram. Gera conteúdo para próximos stories.`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil',
+slides:[{t:'t-blue',h:`<div class="blob" style="width:200px;height:200px;top:-20px;right:-20px;background:rgba(255,255,255,.06);filter:blur(40px)"></div><div class="si"><div class="story-c"><div class="eye" style="color:rgba(255,255,255,.52);margin-bottom:0">junho encerrado · julho começa</div><div class="sq" style="color:#fff;font-size:clamp(16px,3.2vw,22px)">Tem dúvida sobre IA no judiciário?</div><div style="font-size:12px;color:rgba(255,255,255,.62);font-weight:500">Manda aqui — respondemos nos próximos stories.</div><div style="background:rgba(255,255,255,.14);border-radius:9px;padding:12px 16px;width:100%;text-align:left"><div style="font-size:11px;color:rgba(255,255,255,.38)">Digite sua pergunta...</div></div><div style="font-size:10px;color:rgba(255,255,255,.28)">Caixa de perguntas ativa</div></div></div>`}]},
+
+{id:'034',date:'01/07 TER',fmt:'r',boost:true,cat:'Produto',
+title:'Gestão de prazos: nunca mais uma surpresa',
+caption:`Prazos perdidos custam caro no judiciário — em recursos, em reputação, em trabalho extra.\n\nA Nowlex mapeia automaticamente os prazos de cada processo e alerta a equipe com antecedência configurável.\n\nSem planilha. Sem post-it. Sem surpresa na segunda-feira.`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil #PJe #processoeletronico #LegalTechBR',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:250px;height:250px;top:-40px;right:-40px;opacity:.3"></div><div class="si"><div class="eye">funcionalidade · gestão de prazos</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px"><div class="hl" style="font-size:clamp(16px,3.2vw,26px);margin-bottom:0">Prazos perdidos<br>custam caro.<br>A IA <em>previne.</em></div><div style="display:flex;flex-direction:column;gap:7px"><div style="display:flex;align-items:center;gap:9px;background:rgba(255,85,85,.06);border:1px solid rgba(255,85,85,.14);border-radius:6px;padding:9px 12px"><div style="width:7px;height:7px;border-radius:50%;background:#ff5555;flex-shrink:0"></div><div style="font-size:10px;color:rgba(242,242,242,.55)">Prazo vencendo em 24h — <strong style="color:#ff9999">3 processos</strong></div></div><div style="display:flex;align-items:center;gap:9px;background:rgba(255,180,0,.06);border:1px solid rgba(255,180,0,.14);border-radius:6px;padding:9px 12px"><div style="width:7px;height:7px;border-radius:50%;background:#ffb400;flex-shrink:0"></div><div style="font-size:10px;color:rgba(242,242,242,.55)">Prazo em 72h — <strong style="color:#ffd060">12 processos</strong></div></div><div style="display:flex;align-items:center;gap:9px;background:rgba(0,200,100,.06);border:1px solid rgba(0,200,100,.14);border-radius:6px;padding:9px 12px"><div style="width:7px;height:7px;border-radius:50%;background:#00c864;flex-shrink:0"></div><div style="font-size:10px;color:rgba(242,242,242,.55)">No prazo — <strong style="color:#80e4a8">147 processos</strong></div></div></div><div style="font-size:10px;color:rgba(242,242,242,.26)">Sem planilha. Sem post-it. Sem surpresa.</div></div><div class="wm" style="margin-top:12px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'035',date:'01/07 TER',fmt:'s',boost:false,cat:'Engajamento',
+title:'Respondendo perguntas dos seguidores',
+caption:`Stories sequenciais respondendo as melhores perguntas da caixa (#033). Adaptar com perguntas reais recebidas.`,
+tags:'#nowlex #IAnojudiciário #GovTechBrasil',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:180px;height:180px;top:20%;left:-35px;opacity:.12"></div><div class="si" style="padding:24px 26px"><div class="eye" style="margin-bottom:12px">respondendo vocês</div><div style="background:rgba(0,107,249,.08);border-left:3px solid var(--blue);padding:10px 12px;border-radius:0 6px 6px 0;margin-bottom:12px"><div style="font-size:9px;font-weight:700;color:rgba(0,107,249,.6);letter-spacing:1px;margin-bottom:5px">PERGUNTA</div><div style="font-size:11px;font-style:italic;color:rgba(242,242,242,.68);">"A IA da Nowlex funciona com processos físicos digitalizados?"</div></div><div style="font-size:12px;font-weight:700;color:rgba(242,242,242,.8);margin-bottom:9px">Sim — com OCR jurídico.</div><div style="font-size:11px;color:rgba(242,242,242,.45);line-height:1.6;flex:1">A Nowlex processa documentos digitalizados via OCR com validação semântica. Reconhece o padrão do tribunal.</div><div style="font-size:10px;color:rgba(242,242,242,.22);margin-top:auto">Mais perguntas → DM nowlex.ai</div></div>`}]},
+
+{id:'036',date:'02/07 QUA',fmt:'c',boost:true,cat:'Governança',
+title:'Resolução CNJ 332/2020: os 4 princípios',
+caption:`A Resolução CNJ 332/2020 estabeleceu os princípios para uso de IA no judiciário brasileiro. Quatro anos depois, ela continua sendo a bússola de qualquer solução séria.\n\nTransparência · Não discriminação · Auditabilidade · Responsabilidade humana\n\nA Nowlex foi construída com esses quatro princípios como requisitos — não como opcionais. Salve e encaminhe para o departamento jurídico do seu tribunal.`,
+tags:'#nowlex #CNJdigital #IAnojudiciário #GovTechBrasil #LGPD #tribunaisdigitais',
+slides:[
+{t:'t-dark',h:`<div class="blob" style="width:260px;height:260px;top:-40px;right:-40px;opacity:.32"></div><span class="sn">1/5</span><div class="si"><div class="eye">resolução cnj 332/2020</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(18px,3.8vw,30px)">A bússola da<br><em>IA</em> no<br>judiciário<br>brasileiro.</div><div class="bd" style="font-size:11px;margin-bottom:0">4 princípios. 1 resolução. O que todo gestor precisa saber.</div><div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">2/5</span><div class="si"><div class="eye">princípio 01</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,28px)"><em>Transparência</em></div><div class="bd">O cidadão tem direito de saber que a IA foi usada no processamento do seu processo.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">3/5</span><div class="si"><div class="eye">princípio 02</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,26px)">Sem <em>viés</em><br>algorítmico.</div><div class="bd">A IA não pode reproduzir discriminações históricas. Monitoramento contínuo de viés é obrigação.</div><div class="wm">now<em>lex</em>.ai</div></div>`},
+{t:'t-dark',h:`<span class="sn">4/5</span><div class="si"><div class="eye">princípios 03 e 04</div><div style="flex:1"></div><div class="rule"></div><div class="hl" style="font-size:clamp(18px,3.5vw,26px)"><em>Auditabilidade</em><br>+ Decisão<br>humana.</div><div class="bd">Cada ação da IA é rastreável. A decisão final sempre é do magistrado — a IA subsidia, jamais substitui.</div><div class="chip" style="align-self:flex-start">Res. CNJ 332/2020</div><div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div></div>`},
+{t:'t-blue',h:`<span class="sn" style="color:rgba(255,255,255,.16)">5/5</span><div class="si"><div class="eye">nowlex — conformidade como base</div><div style="flex:1"></div><div class="hl" style="font-size:clamp(20px,4vw,30px)">Construída com<br>os 4 princípios<br><em>como requisito.</em></div><div class="bd" style="color:rgba(255,255,255,.68)">Não como afterthought. Não como marketing. Como arquitetura.</div><div class="cta">nowlex.ai</div><div class="wm">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'037',date:'02/07 QUA',fmt:'s',boost:false,cat:'Educativo',
+title:'Curiosidade: relatório anual do CNJ sobre IA',
+caption:`Story de curiosidade institucional. Adicionar na bio o link para o relatório mais recente do CNJ.`,
+tags:'#CNJdigital #nowlex #IAnojudiciário #GovTechBrasil',
+slides:[{t:'t-dark',h:`<div class="blob" style="width:200px;height:200px;top:30%;right:-40px;opacity:.14"></div><div class="si"><div class="story-c"><div class="eye" style="margin-bottom:0">curiosidade · relatório cnj</div><div class="sq" style="font-size:clamp(16px,3vw,22px)">Você sabia que o CNJ publica relatório anual sobre uso de IA nos tribunais?</div><div style="font-size:12px;color:rgba(242,242,242,.42);font-weight:500">Sabe em qual posição o seu tribunal aparece?</div><div class="btn-pill">Ver relatório na bio →</div><div style="font-size:10px;color:rgba(242,242,242,.18)">Atualizado anualmente pelo CNJ</div></div></div>`}]},
+
+{id:'038',date:'03/07 QUI',fmt:'r',boost:false,cat:'Produto',
+title:'Processos sigilosos: a IA respeita isso',
+caption:`Processos em segredo de Justiça têm regras específicas. A IA precisa respeitar isso — e a Nowlex foi construída para isso.\n\nControle de acesso granular, logs de auditoria por usuário e criptografia em trânsito e em repouso.\n\nConformidade não é uma funcionalidade extra. É a base.`,
+tags:'#nowlex #LGPD #CNJdigital #IAnojudiciário #GovTechBrasil #segurança',
+slides:[{t:'t-mid',h:`<div class="blob" style="width:240px;height:240px;top:-40px;left:-40px;opacity:.26"></div><div class="si"><div class="eye">segurança · processos sigilosos</div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px"><div class="hl" style="font-size:clamp(16px,3.2vw,26px);margin-bottom:0">Processos em<br>segredo de Justiça.<br>A IA respeita<br><em>isso.</em></div><div style="display:flex;flex-direction:column;gap:8px"><div style="background:rgba(0,107,249,.08);border:1px solid rgba(0,107,249,.2);border-radius:6px;padding:11px 13px"><div style="font-size:8px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">controle de acesso granular</div><div style="font-size:10px;color:rgba(242,242,242,.48)">A IA analisa somente o que tem permissão. Nada além disso.</div></div><div style="background:rgba(0,107,249,.08);border:1px solid rgba(0,107,249,.2);border-radius:6px;padding:11px 13px"><div style="font-size:8px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">criptografia ponta a ponta</div><div style="font-size:10px;color:rgba(242,242,242,.48)">Em trânsito e em repouso. Logs de auditoria por usuário.</div></div></div></div><div class="wm" style="margin-top:12px">now<em>lex</em>.ai</div></div>`}]},
+
+{id:'039',date:'03/07 QUI',fmt:'s',boost:false,cat:'Conteúdo',
+title:'Leitura: segurança de dados em IA pública',
+caption:`Story direcionando para conteúdo técnico sobre segurança — complementa o Reels #038.`,
+tags:'#nowlex #LGPD #GovTechBrasil #IAnojudiciário',
+slides:[{t:'t-blue',h:`<div class="blob" style="width:160px;height:160px;bottom:-15px;right:-15px;background:rgba(255,255,255,.06);filter:blur(35px)"></div><div class="si"><div class="story-c"><div class="eye" style="color:rgba(255,255,255,.52);margin-bottom:0">leitura recomendada</div><div class="sq" style="color:#fff;font-size:clamp(14px,2.8vw,20px)">"Segurança de dados em soluções de IA para o setor público"</div><div style="font-size:12px;color:rgba(255,255,255,.58);font-weight:500">Para gestores de TI que precisam de argumentos técnicos sólidos.</div><div style="font-size:26px">☝️</div><div class="btn-pill">Leia na bio →</div></div></div>`}]},
+
+{id:'040',date:'04/07 SEX',fmt:'i',boost:true,cat:'Autoridade',
+title:'Mapa da inovação judicial: qual cor tem seu estado?',
+caption:`O mapa da inovação judicial no Brasil está sendo desenhado agora. Qual cor vai ter o seu estado?\n\nA Nowlex atua em múltiplos estados com integração nativa. Onde está o seu tribunal nesse mapa?\n\nEncerramento da primeira quinzena de julho — semana que vem tem novidade.`,
+tags:'#nowlex #CNJdigital #GovTechBrasil #IAnojudiciário #tribunaisdigitais #inovaçãopública',
+slides:[{t:'t-ink',h:`<div class="blob" style="width:340px;height:340px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.15"></div><div class="si" style="align-items:center;text-align:center;justify-content:center"><div class="eye" style="text-align:center;margin-bottom:18px">mapa da inovação judicial</div><div class="hl" style="text-align:center;font-size:clamp(20px,4vw,34px)">Qual cor vai ter<br>o seu <em>estado?</em></div><div style="width:32px;height:2px;background:rgba(0,107,249,.38);border-radius:2px;margin:14px auto"></div><div style="display:flex;gap:14px;justify-content:center;margin-bottom:18px"><div style="text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:var(--blue);margin:0 auto 5px"></div><div style="font-size:9px;color:rgba(242,242,242,.3)">IA ativa</div></div><div style="text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(0,107,249,.28);margin:0 auto 5px"></div><div style="font-size:9px;color:rgba(242,242,242,.3)">em implantação</div></div><div style="text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);margin:0 auto 5px"></div><div style="font-size:9px;color:rgba(242,242,242,.3)">sem IA ainda</div></div></div><div style="font-size:11px;color:rgba(242,242,242,.28);line-height:1.5;max-width:240px">O mapa está sendo desenhado agora. A Nowlex atua em múltiplos estados.</div><div class="wm" style="margin-top:24px;text-align:center">now<em>lex</em>.ai</div></div>`}]}
+];
+
+/* ══ RENDER GRID ══ */
+const FMT_LABEL = {c:'Carrossel',r:'Reels',s:'Story',i:'Imagem'};
+const FMT_CLS   = {c:'fc',r:'fr',s:'fs',i:'fi'};
+const THEME_COLORS = {'t-dark':'#1a1a1a','t-blue':'#006bf9','t-white':'#f2f2f2','t-ink':'#0e0e14','t-mid':'#111827'};
+
+function renderGrid(list) {
+  const g = document.getElementById('grid');
+  g.innerHTML = '';
+  list.forEach(p => {
+    const th = p.slides[0].t;
+    const bg = THEME_COLORS[th] || '#1a1a1a';
+    const isLight = th === 't-white';
+    const titleColor = isLight ? 'rgba(26,26,26,.85)' : 'rgba(242,242,242,.88)';
+    const div = document.createElement('div');
+    div.className = 'card ' + th;
+    div.dataset.id = p.id;
+    div.onclick = () => openModal(p.id);
+    div.innerHTML = `
+      <div class="card-bg" style="background:${bg}"></div>
+      ${th!=='t-white' ? `<div class="card-blob" style="width:140px;height:140px;top:-20px;right:-20px;opacity:.35"></div>` : ''}
+      <span class="card-num">#${p.id}</span>
+      <span class="card-fmt ${FMT_CLS[p.fmt]}">${FMT_LABEL[p.fmt]}</span>
+      ${p.boost ? `<span class="card-boost">🚀</span>` : ''}
+      <div class="card-inner">
+        <div class="card-title" style="color:${titleColor}">${p.title}</div>
+      </div>`;
+    g.appendChild(div);
+  });
+}
+renderGrid(POSTS);
+
+/* ══ FILTER ══ */
+function filt(type, btn) {
+  document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  let list = POSTS;
+  if (type === 'turb') list = POSTS.filter(p => p.boost);
+  else if (type !== 'all') list = POSTS.filter(p => p.fmt === type);
+  renderGrid(list);
+}
+
+/* ══ MODAL STATE ══ */
+let MS = 0;
+let MCUR = null;
+
+function openModal(id) {
+  const p = POSTS.find(x => x.id === id);
+  if (!p) return;
+  MCUR = p; MS = 0;
+
+  document.getElementById('mnum').textContent = '#' + p.id + ' · ' + p.date;
+  const fb = document.getElementById('mfmt');
+  fb.textContent = FMT_LABEL[p.fmt];
+  fb.className = 'modal-fmt-badge ' + FMT_CLS[p.fmt];
+  const mb = document.getElementById('mboost');
+  mb.style.display = p.boost ? '' : 'none';
+  document.getElementById('mtitle').textContent = p.title;
+  document.getElementById('mcap').textContent = p.caption;
+  document.getElementById('mtags').textContent = p.tags;
+  document.getElementById('copylbl').textContent = 'Copiar Legenda';
+  document.getElementById('copybtn').classList.remove('copied');
+
+  buildModalPost(p);
+  document.getElementById('overlay').classList.add('open');
+}
+
+function buildModalPost(p) {
+  const mp = document.getElementById('mpost');
+  if (p.slides.length === 1) {
+    mp.innerHTML = `<div class="mslide ${p.slides[0].t}" style="height:100%">${p.slides[0].h}</div>`;
+  } else {
+    const dots = p.slides.map((_, i) => `<div class="mdot${i===0?' on':''}" onclick="mGoTo(${i})"></div>`).join('');
+    const slides = p.slides.map(s => `<div class="mslide ${s.t}">${s.h}</div>`).join('');
+    mp.innerHTML = `
+      <div style="position:relative;height:100%;overflow:hidden;border-radius:14px">
+        <button class="marr L hide" id="mal" onclick="mMove(-1)">‹</button>
+        <button class="marr R${p.slides.length===1?' hide':''}" id="mar" onclick="mMove(1)">›</button>
+        <div class="mtrack" id="mtrack">${slides}</div>
+        <div class="mdots" id="mdots">${dots}</div>
+      </div>`;
+  }
+}
+
+function mMove(d) {
+  if (!MCUR) return;
+  const n = MCUR.slides.length;
+  MS = Math.max(0, Math.min(n-1, MS+d));
+  mRender(n);
+}
+function mGoTo(i) { if (!MCUR) return; MS=i; mRender(MCUR.slides.length); }
+function mRender(n) {
+  const t = document.getElementById('mtrack'); if (!t) return;
+  t.style.transform = 'translateX(-' + MS*100 + '%)';
+  const al = document.getElementById('mal'); const ar = document.getElementById('mar');
+  if (al) al.classList.toggle('hide', MS===0);
+  if (ar) ar.classList.toggle('hide', MS===n-1);
+  const dots = document.getElementById('mdots');
+  if (dots) [...dots.children].forEach((d,i) => d.classList.toggle('on', i===MS));
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('overlay')) return;
+  document.getElementById('overlay').classList.remove('open');
+  MCUR = null;
+}
+
+function copyLeg() {
+  if (!MCUR) return;
+  navigator.clipboard.writeText(MCUR.caption + '\n\n' + MCUR.tags).then(() => {
+    document.getElementById('copylbl').textContent = 'Copiado!';
+    document.getElementById('copybtn').classList.add('copied');
+    setTimeout(() => {
+      document.getElementById('copylbl').textContent = 'Copiar Legenda';
+      document.getElementById('copybtn').classList.remove('copied');
+    }, 2000);
+  });
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal({target:document.getElementById('overlay')}); });
+</script>
+</body>
+</html>

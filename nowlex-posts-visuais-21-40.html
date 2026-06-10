@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nowlex — Posts 21–40</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#006bf9;--black:#1a1a1a;--white:#f2f2f2}
+body{font-family:'Inter Tight',system-ui,sans-serif;background:#0d0d0d;color:var(--white);padding:0 0 80px}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(13,13,13,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:16px;padding:0 32px;height:52px}
+.brand{font-size:16px;font-weight:800;color:var(--blue);letter-spacing:-.3px}
+.brand span{color:var(--white)}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(0,107,249,.15);color:var(--blue);border:1px solid rgba(0,107,249,.25);font-family:monospace;letter-spacing:.5px}
+.filters{display:flex;gap:6px;margin-left:auto}
+.fb{font-size:11px;font-weight:600;padding:4px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.4);cursor:pointer;font-family:'Inter Tight',sans-serif;transition:all .15s}
+.fb.on,.fb:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.page{max-width:1060px;margin:0 auto;padding:40px 24px}
+.day-hd{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.day-dt{font-family:monospace;font-size:10px;color:var(--blue);letter-spacing:2px;text-transform:uppercase}
+.day-nm{font-size:19px;font-weight:800;letter-spacing:-.5px}
+.day-group{margin-bottom:52px}
+.post-row{display:flex;gap:20px;flex-wrap:wrap}
+.post-col{display:flex;flex-direction:column;gap:0;flex:1;min-width:260px;max-width:480px}
+.post-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.p-num{font-size:10px;font-weight:700;color:var(--blue);font-family:monospace;letter-spacing:.5px}
+.p-fmt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px}
+.fc{background:rgba(0,107,249,.18);color:#7db5ff}
+.fr{background:rgba(255,255,255,.1);color:#ccc}
+.fs{background:rgba(0,200,255,.12);color:#5bc8d8}
+.fi{background:rgba(100,220,130,.12);color:#6dbb88}
+.p-turb{font-size:9px;font-weight:700;padding:2px 8px;background:#fff3cd;color:#7a5700;border-radius:3px}
+.p-time{font-size:10px;color:rgba(255,255,255,.3);margin-left:auto;font-family:monospace}
+.frame{width:100%;aspect-ratio:1/1;border-radius:12px;overflow:hidden;position:relative;background:var(--black);font-family:'Inter Tight',sans-serif}
+.track{display:flex;height:100%;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.slide{flex:0 0 100%;height:100%;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.t-dark{background:#1a1a1a}
+.t-blue{background:#006bf9}
+.t-white{background:#f2f2f2}
+.t-ink{background:#0e0e14}
+.t-mid{background:#111827}
+.t-dark::before,.t-ink::before,.t-mid::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(0,107,249,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,107,249,.05) 1px,transparent 1px);background-size:36px 36px}
+.blob{position:absolute;border-radius:50%;background:rgba(0,107,249,.28);filter:blur(70px);pointer-events:none}
+.si{position:relative;z-index:2;padding:32px 36px;display:flex;flex-direction:column;height:100%}
+.eye{font-size:9px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);font-family:monospace;margin-bottom:auto}
+.t-blue .eye{color:rgba(255,255,255,.6)}
+.t-white .eye{color:var(--blue)}
+.hl{font-size:clamp(26px,5vw,44px);font-weight:800;line-height:1.05;letter-spacing:-1.5px;color:#f2f2f2;margin-bottom:14px}
+.t-white .hl{color:#1a1a1a}
+.t-blue .hl{color:#fff}
+.hl em{font-style:normal;color:var(--blue)}
+.t-blue .hl em{color:rgba(255,255,255,.75)}
+.t-white .hl em{color:var(--blue)}
+.bd{font-size:13px;font-weight:400;line-height:1.65;color:rgba(242,242,242,.55);margin-bottom:20px}
+.t-blue .bd{color:rgba(255,255,255,.72)}
+.t-white .bd{color:rgba(26,26,26,.58)}
+.stat-n{font-size:clamp(64px,13vw,100px);font-weight:900;letter-spacing:-4px;line-height:1;color:var(--blue)}
+.t-blue .stat-n{color:#fff}
+.stat-l{font-size:13px;font-weight:500;color:rgba(242,242,242,.4);margin-top:4px;margin-bottom:20px;line-height:1.4}
+.t-blue .stat-l{color:rgba(255,255,255,.6)}
+.t-white .stat-l{color:rgba(26,26,26,.45)}
+.rule{width:32px;height:3px;background:var(--blue);border-radius:2px;margin-bottom:18px}
+.t-blue .rule{background:rgba(255,255,255,.45)}
+.t-white .rule{background:var(--blue)}
+.wm{margin-top:auto;font-size:11px;font-weight:800;letter-spacing:-.2px;color:rgba(242,242,242,.15)}
+.t-white .wm{color:rgba(26,26,26,.15)}
+.t-blue .wm{color:rgba(255,255,255,.25)}
+.wm em{font-style:normal;color:var(--blue)}
+.t-blue .wm em{color:rgba(255,255,255,.5)}
+.cta{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:14px}
+.t-blue .cta{color:rgba(255,255,255,.85)}
+.cl{display:flex;flex-direction:column;gap:11px;margin-bottom:18px}
+.ci{display:flex;align-items:flex-start;gap:10px;font-size:12px;font-weight:500;color:rgba(242,242,242,.8);line-height:1.4}
+.t-white .ci{color:rgba(26,26,26,.75)}
+.cdot{width:18px;height:18px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#fff;font-weight:700;margin-top:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid rgba(0,107,249,.3);color:rgba(0,107,249,.85);background:rgba(0,107,249,.08)}
+.t-blue .chip{border-color:rgba(255,255,255,.3);color:#fff;background:rgba(255,255,255,.1)}
+.t-white .chip{border-color:rgba(0,107,249,.25);color:var(--blue)}
+.poll{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.popt{padding:10px 14px;border-radius:7px;border:1px solid rgba(0,107,249,.22);font-size:12px;font-weight:600;color:rgba(242,242,242,.75);background:rgba(0,107,249,.06);display:flex;align-items:center;gap:8px}
+.popt::before{content:'';width:12px;height:12px;border-radius:50%;border:2px solid var(--blue);flex-shrink:0}
+.story-c{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:16px;padding:36px 32px}
+.sq{font-size:clamp(20px,4vw,32px);font-weight:800;letter-spacing:-1px;line-height:1.15;color:#f2f2f2;max-width:340px}
+.t-blue .sq{color:#fff}
+.btn-pill{display:inline-block;font-size:13px;font-weight:700;background:var(--blue);color:#fff;padding:10px 24px;border-radius:30px;margin-top:4px}
+.t-blue .btn-pill{background:rgba(255,255,255,.18)}
+.sn{position:absolute;top:20px;right:24px;font-size:9px;font-weight:600;color:rgba(255,255,255,.18);font-family:monospace;letter-spacing:.5px;z-index:3}
+.t-white .sn{color:rgba(26,26,26,.18)}
+.dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:10}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:all .2s}
+.dot.on{background:#fff;width:16px;border-radius:3px}
+.arr{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:16px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:all .15s;backdrop-filter:blur(6px);font-family:system-ui;line-height:1}
+.arr:hover{background:var(--blue);border-color:var(--blue)}
+.arr.L{left:10px}.arr.R{right:10px}
+.arr.hide{opacity:0;pointer-events:none}
+.caption{border:1px solid rgba(255,255,255,.07);border-top:none;border-radius:0 0 12px 12px;background:rgba(255,255,255,.02);padding:14px 18px}
+.cap-text{font-size:12px;line-height:1.7;color:rgba(242,242,242,.5);white-space:pre-line;overflow:hidden;max-height:52px;transition:max-height .3s}
+.cap-text.open{max-height:600px}
+.cap-tags{margin-top:8px;font-size:10px;color:rgba(0,107,249,.6);font-family:monospace;line-height:1.9}
+.cap-btn{background:none;border:none;cursor:pointer;font-size:11px;font-weight:600;color:var(--blue);font-family:'Inter Tight',sans-serif;margin-top:6px;padding:0}
+
+/* timeline dots vertical */
+.tl{display:flex;flex-direction:column;gap:0;margin-bottom:16px}
+.tl-item{display:flex;gap:14px;align-items:flex-start}
+.tl-left{display:flex;flex-direction:column;align-items:center;gap:0}
+.tl-dot{width:22px;height:22px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+.tl-line{width:2px;flex:1;min-height:16px;background:rgba(0,107,249,.2)}
+.tl-txt{font-size:12px;color:rgba(242,242,242,.65);line-height:1.4;padding-top:3px;padding-bottom:16px}
+.tl-txt strong{color:rgba(242,242,242,.9);font-weight:700}
+
+/* quote block */
+.qt{border-left:3px solid var(--blue);padding:14px 16px;background:rgba(0,107,249,.06);border-radius:0 8px 8px 0;margin-bottom:16px}
+.qt-text{font-size:13px;font-style:italic;color:rgba(242,242,242,.75);line-height:1.6;margin-bottom:8px}
+.qt-src{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:.5px}
+
+/* two-col stat */
+.two-stat{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.ts-box{background:rgba(0,107,249,.07);border:1px solid rgba(0,107,249,.18);border-radius:8px;padding:14px 12px;text-align:center}
+.ts-n{font-size:clamp(30px,6vw,48px);font-weight:900;letter-spacing:-2px;color:var(--blue);line-height:1}
+.ts-l{font-size:10px;color:rgba(242,242,242,.4);margin-top:4px;line-height:1.3}
+
+/* tag row for story cta */
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tag-pill{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,107,249,.25);color:rgba(0,107,249,.8);background:rgba(0,107,249,.06)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">now<span>lex</span>.ai</div>
+  <div class="badge">Posts 21–40</div>
+  <div class="filters">
+    <button class="fb on" onclick="filt('all',this)">Todos</button>
+    <button class="fb" onclick="filt('turb',this)">🚀 Turbinar</button>
+    <button class="fb" onclick="filt('c',this)">Carrossel</button>
+    <button class="fb" onclick="filt('r',this)">Reels</button>
+    <button class="fb" onclick="filt('s',this)">Story</button>
+    <button class="fb" onclick="filt('i',this)">Imagem</button>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ══ SEGUNDA 23/06 ══ -->
+<div class="day-group" id="d2306">
+  <div class="day-hd">
+    <span class="day-dt">23 JUN · SEG</span>
+    <span class="day-nm">Segunda-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #021 CARROSSEL ROI 6 MESES -->
+    <div class="post-col" data-fmt="c" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#021</span><span class="p-fmt fc">Carrossel</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f021">
+        <button class="arr L hide" id="aL021" onclick="mv('021',-1)">‹</button>
+        <button class="arr R" id="aR021" onclick="mv('021',1)">›</button>
+        <div class="track" id="tr021">
+
+          <div class="slide t-ink">
+            <div class="blob" style="width:340px;height:340px;top:-80px;right:-80px;opacity:.4"></div>
+            <span class="sn">1 / 6</span>
+            <div class="si">
+              <div class="eye">roi · 6 meses</div>
+              <div style="flex:1"></div>
+              <div class="hl">O que 6 meses<br>de IA fazem pelo<br><em>orçamento</em><br>do seu tribunal.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">2 / 6</span>
+            <div class="si">
+              <div class="eye">o custo invisível</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,32px)">Triagem manual<br>tem <em>custo real.</em></div>
+              <div class="bd">Horas de trabalho qualificado alocadas em classificação repetitiva. Isso é dinheiro público mal aplicado — não é culpa da equipe, é falta de ferramenta.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">3 / 6</span>
+            <div class="si">
+              <div class="eye">com nowlex</div>
+              <div style="flex:1"></div>
+              <div class="two-stat">
+                <div class="ts-box">
+                  <div class="ts-n">60<span style="font-size:.5em;opacity:.6">%</span></div>
+                  <div class="ts-l">menos tempo em triagem</div>
+                </div>
+                <div class="ts-box">
+                  <div class="ts-n">78<span style="font-size:.5em;opacity:.6">%</span></div>
+                  <div class="ts-l">dos casos automatizados em 90d</div>
+                </div>
+              </div>
+              <div class="bd" style="font-size:12px;margin-bottom:0">Servidores realocados para análise, instrução e decisão — trabalho que exige raciocínio jurídico.</div>
+              <div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">4 / 6</span>
+            <div class="si">
+              <div class="eye">menos erros · mais conformidade</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,30px)">Erros de<br>classificação<br><em>custam caro.</em></div>
+              <div class="bd">Processos mal classificados geram recursos, retrabalho e risco de nulidade. A IA classifica com critérios consistentes — sem fadiga, sem segunda-feira.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">5 / 6</span>
+            <div class="si">
+              <div class="eye">conformidade evita multas</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,30px)"><em>LGPD</em> no<br>judiciário não<br>é opcional.</div>
+              <div class="bd">Adequação reativa custa mais do que conformidade por design. A Nowlex já nasce dentro das normas — sem custo adicional de adequação.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-blue">
+            <span class="sn" style="color:rgba(255,255,255,.18)">6 / 6</span>
+            <div class="si">
+              <div class="eye">o retorno começa antes do trimestre</div>
+              <div style="flex:1"></div>
+              <div class="hl" style="font-size:clamp(22px,4vw,36px)">Quer o cálculo<br>para o perfil<br><em>do seu tribunal?</em></div>
+              <div class="cta">nowlex.ai</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="dots" id="dt021">
+          <div class="dot on" onclick="gt('021',0)"></div>
+          <div class="dot" onclick="gt('021',1)"></div>
+          <div class="dot" onclick="gt('021',2)"></div>
+          <div class="dot" onclick="gt('021',3)"></div>
+          <div class="dot" onclick="gt('021',4)"></div>
+          <div class="dot" onclick="gt('021',5)"></div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct021">Gestores precisam de números. Aqui estão.
+
+Triagem manual tem custo real — horas de trabalho qualificado alocadas em tarefa repetitiva.
+
+Com Nowlex: 60% menos tempo em triagem. 78% dos casos automatizados em 90 dias. Servidores realocados para análise e instrução.
+
+Conformidade LGPD por design evita retrabalho e multas.
+
+O retorno começa antes do fim do primeiro trimestre. Quer o cálculo para o perfil do seu tribunal? nowlex.ai</div>
+        <button class="cap-btn" onclick="tc('ct021',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #GovTechBrasil #IAnojudiciário #setorpúblico #inovaçãopública #LegalTechBR</div>
+      </div>
+    </div>
+
+    <!-- #022 STORY POLL PROJETO EM ANDAMENTO -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#022</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f022">
+        <div class="track" id="tr022">
+          <div class="slide t-dark">
+            <div class="blob" style="width:260px;height:260px;top:40%;right:-60px;opacity:.17"></div>
+            <div class="si">
+              <div class="story-c">
+                <div class="eye" style="margin-bottom:0">mapeamento · maturidade digital</div>
+                <div class="sq">Seu tribunal já tem algum projeto de IA em andamento?</div>
+                <div class="poll" style="width:100%;text-align:left">
+                  <div class="popt">Sim, já em uso</div>
+                  <div class="popt">Sim, em planejamento</div>
+                  <div class="popt">Não ainda</div>
+                  <div class="popt">Não sei informar</div>
+                </div>
+                <div style="font-size:11px;color:rgba(242,242,242,.2)">Podemos ser o ponto de partida. nowlex.ai</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct022">Mapeamento de maturidade digital do público. Qualifica leads por estágio — quem votou "Não ainda" recebe DM com conteúdo de iniciação. Quem votou "Em planejamento" recebe CTA de demonstração.</div>
+        <div class="cap-tags">#nowlex #IAnojudiciário #GovTechBrasil</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ TERÇA 24/06 ══ -->
+<div class="day-group" id="d2406">
+  <div class="day-hd">
+    <span class="day-dt">24 JUN · TER</span>
+    <span class="day-nm">Terça-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #023 REELS BASTIDORES TREINAMENTO -->
+    <div class="post-col" data-fmt="r" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#023</span><span class="p-fmt fr">Reels</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f023">
+        <div class="track" id="tr023">
+          <div class="slide t-ink">
+            <div class="blob" style="width:320px;height:320px;bottom:-60px;left:-60px;opacity:.35"></div>
+            <div class="si">
+              <div class="eye">bastidores · treinamento do modelo</div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px">
+                <div class="hl" style="font-size:clamp(20px,3.8vw,30px)">IA genérica não<br>entende <em>"despacho<br>de mero expediente".</em><br>A nossa entende.</div>
+                <div style="background:rgba(0,107,249,.08);border:1px solid rgba(0,107,249,.2);border-radius:8px;padding:14px 16px">
+                  <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:rgba(0,107,249,.7);text-transform:uppercase;margin-bottom:8px">como treinamos</div>
+                  <div class="cl" style="gap:8px;margin-bottom:0">
+                    <div class="ci" style="font-size:11px"><div class="cdot" style="width:14px;height:14px;font-size:8px">1</div>Curadoria de linguagem processual real</div>
+                    <div class="ci" style="font-size:11px"><div class="cdot" style="width:14px;height:14px;font-size:8px">2</div>Validação por especialistas jurídicos</div>
+                    <div class="ci" style="font-size:11px"><div class="cdot" style="width:14px;height:14px;font-size:8px">3</div>Zero exposição de dados de clientes</div>
+                  </div>
+                </div>
+              </div>
+              <div class="wm" style="margin-top:16px">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct023">IA genérica não entende "despacho de mero expediente". A nossa entende.
+
+Veja nos bastidores como o time da Nowlex alimenta e valida o modelo com linguagem processual real — sem expor dados de clientes, sem atalhos.
+
+Esse é o trabalho invisível que faz toda a diferença quando a IA precisa classificar uma petição de segunda-feira de manhã com 200 processos na fila.</div>
+        <button class="cap-btn" onclick="tc('ct023',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #IAnojudiciário #LegalTechBR #GovTechBrasil #direitoetecnologia</div>
+      </div>
+    </div>
+
+    <!-- #024 STORY DEPOIMENTO GESTOR TI -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#024</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f024">
+        <div class="track" id="tr024">
+          <div class="slide t-dark">
+            <div class="blob" style="width:240px;height:240px;top:30%;left:-50px;opacity:.15"></div>
+            <div class="si">
+              <div class="story-c">
+                <div style="font-size:52px;color:var(--blue);font-weight:900;line-height:.8;align-self:flex-start">"</div>
+                <div class="sq" style="font-size:clamp(15px,3vw,20px);font-style:italic;font-weight:600;text-align:left;color:rgba(242,242,242,.82)">Eu era cético. Achava que IA era marketing. Depois da primeira semana com Nowlex em produção, entendi que era infraestrutura.</div>
+                <div style="align-self:flex-start">
+                  <div style="font-size:11px;font-weight:700;color:var(--blue)">Coordenador de TI</div>
+                  <div style="font-size:10px;color:rgba(242,242,242,.3)">Tribunal Regional Federal</div>
+                </div>
+                <div style="width:100%;height:1px;background:rgba(255,255,255,.06)"></div>
+                <div style="font-size:11px;color:rgba(242,242,242,.2);align-self:flex-end">nowlex.ai</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct024">Depoimento anônimo de gestor de TI — perfil decisor. Publicar após Reels #023 para reforçar credibilidade com prova social de quem mais resiste à adoção.</div>
+        <div class="cap-tags">#nowlex #GovTechBrasil #IAnojudiciário</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ QUARTA 25/06 ══ -->
+<div class="day-group" id="d2506">
+  <div class="day-hd">
+    <span class="day-dt">25 JUN · QUA</span>
+    <span class="day-nm">Quarta-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #025 IMAGEM DEMO CTA -->
+    <div class="post-col" data-fmt="i" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#025</span><span class="p-fmt fi">Imagem</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f025">
+        <div class="track" id="tr025">
+          <div class="slide t-blue">
+            <div class="blob" style="width:360px;height:360px;top:-80px;left:-80px;background:rgba(255,255,255,.07);filter:blur(70px)"></div>
+            <div class="si" style="align-items:flex-start;justify-content:center">
+              <div class="eye" style="margin-bottom:32px;color:rgba(255,255,255,.55)">demonstração institucional</div>
+              <div class="hl" style="font-size:clamp(28px,5.5vw,48px)">45 minutos.<br>Técnico.<br>Sem enrolação.</div>
+              <div class="bd" style="color:rgba(255,255,255,.65);margin-bottom:24px">Para TJs, TRFs, TRTs, Ministérios Públicos, Defensorias e Procuradorias. Sem custo. Sem compromisso.</div>
+              <div style="font-size:14px;font-weight:800;color:#fff;background:rgba(255,255,255,.15);padding:12px 24px;border-radius:30px;display:inline-block">nowlex.ai →</div>
+              <div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct025">Sem compromisso. Sem conversa de vendas.
+
+Uma sessão técnica de 45 minutos onde você vê a Nowlex funcionando no fluxo processual do seu tribunal — com perguntas abertas para o time de engenharia.
+
+Disponível para TJs, TRFs, TRTs, Ministérios Públicos, Defensorias e Procuradorias.
+
+O próximo passo é uma conversa. O que vem depois é decisão sua.</div>
+        <button class="cap-btn" onclick="tc('ct025',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR</div>
+      </div>
+    </div>
+
+    <!-- #026 STORY IA EXPLICÁVEL VS CAIXA-PRETA -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#026</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f026">
+        <div class="track" id="tr026">
+          <div class="slide t-dark">
+            <div class="blob" style="width:220px;height:220px;top:15%;right:-40px;opacity:.15"></div>
+            <div class="si" style="padding:28px 30px">
+              <div class="eye" style="margin-bottom:18px">conceito técnico · auditabilidade</div>
+              <div style="display:flex;flex-direction:column;gap:12px;flex:1;justify-content:center">
+                <div style="background:rgba(255,85,85,.06);border:1px solid rgba(255,85,85,.18);border-radius:8px;padding:14px">
+                  <div style="font-size:9px;font-weight:700;color:rgba(255,100,100,.7);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">IA Caixa-Preta</div>
+                  <div style="font-size:12px;color:rgba(242,242,242,.5);line-height:1.5">Decide sem explicar o porquê. Impossível auditar. Inviável no setor público.</div>
+                </div>
+                <div style="background:rgba(0,107,249,.1);border:1px solid rgba(0,107,249,.28);border-radius:8px;padding:14px">
+                  <div style="font-size:9px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">IA Explicável — Nowlex</div>
+                  <div style="font-size:12px;color:rgba(242,242,242,.65);line-height:1.5">Cada decisão tem rastreabilidade e justificativa. Auditável pelo CNJ. Transparente por design.</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:rgba(242,242,242,.25);margin-top:14px">Res. CNJ 332/2020 exige isso. nowlex.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct026">Story educativo sobre conceito técnico crítico para gestores. IA explicável é requisito da Resolução CNJ 332/2020 — não é diferencial, é obrigação.</div>
+        <div class="cap-tags">#nowlex #CNJdigital #LGPD #IAnojudiciário</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ QUINTA 26/06 ══ -->
+<div class="day-group" id="d2606">
+  <div class="day-hd">
+    <span class="day-dt">26 JUN · QUI</span>
+    <span class="day-nm">Quinta-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #027 REELS ANÁLISE SEMÂNTICA -->
+    <div class="post-col" data-fmt="r" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#027</span><span class="p-fmt fr">Reels</span>
+        <span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f027">
+        <div class="track" id="tr027">
+          <div class="slide t-dark">
+            <div class="blob" style="width:280px;height:280px;top:-50px;right:-50px;opacity:.3"></div>
+            <div class="si">
+              <div class="eye">educativo · análise semântica</div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px">
+                <div class="hl" style="font-size:clamp(18px,3.5vw,28px);margin-bottom:0">O que é análise<br>semântica <em>jurídica?</em></div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px">
+                  <div style="font-size:10px;font-weight:700;color:rgba(242,242,242,.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">texto A</div>
+                  <div style="font-size:12px;color:rgba(242,242,242,.55);">"Requerimento de alvará de soltura..."</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="flex:1;height:1px;background:rgba(0,107,249,.2)"></div>
+                  <div style="font-size:9px;font-weight:800;color:var(--blue);letter-spacing:1px">MESMO SIGNIFICADO</div>
+                  <div style="flex:1;height:1px;background:rgba(0,107,249,.2)"></div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px">
+                  <div style="font-size:10px;font-weight:700;color:rgba(242,242,242,.3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">texto B</div>
+                  <div style="font-size:12px;color:rgba(242,242,242,.55);">"Pedido de liberdade provisória mediante fiança..."</div>
+                </div>
+                <div style="background:rgba(0,107,249,.12);border:1px solid rgba(0,107,249,.3);border-radius:6px;padding:10px 14px;text-align:center">
+                  <div style="font-size:11px;font-weight:700;color:var(--blue)">Nowlex classifica os dois corretamente.</div>
+                </div>
+              </div>
+              <div class="wm" style="margin-top:14px">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct027">Análise semântica é a capacidade da IA de entender o significado do texto, não apenas as palavras.
+
+No contexto jurídico: identificar que "requerimento de alvará de soltura" e "pedido de liberdade provisória" são a mesma coisa — mesmo que escritos de formas completamente diferentes.
+
+Isso é o que separa a Nowlex de um buscador sofisticado.</div>
+        <button class="cap-btn" onclick="tc('ct027',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #IAnojudiciário #LegalTechBR #direitoetecnologia #GovTechBrasil</div>
+      </div>
+    </div>
+
+    <!-- #028 STORY CONTEÚDO SITE -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#028</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f028">
+        <div class="track" id="tr028">
+          <div class="slide t-blue">
+            <div class="blob" style="width:220px;height:220px;bottom:-30px;left:-30px;background:rgba(255,255,255,.08);filter:blur(50px)"></div>
+            <div class="si">
+              <div class="story-c">
+                <div class="eye" style="color:rgba(255,255,255,.55);margin-bottom:0">novo no blog</div>
+                <div class="sq" style="color:#fff;font-size:clamp(16px,3.2vw,22px)">"Como a análise semântica jurídica funciona na prática"</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.6);font-weight:500">Artigo técnico para quem quer entender antes de contratar.</div>
+                <div style="font-size:30px">☝️</div>
+                <div class="btn-pill">Leia na bio →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct028">Story direcionando para conteúdo técnico complementar ao Reels #027. Adaptar título ao artigo mais recente disponível em nowlex.ai.</div>
+        <div class="cap-tags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ SEXTA 27/06 ══ -->
+<div class="day-group" id="d2706">
+  <div class="day-hd">
+    <span class="day-dt">27 JUN · SEX</span>
+    <span class="day-nm">Sexta-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #029 CARROSSEL TRIBUNAIS LÍDERES -->
+    <div class="post-col" data-fmt="c" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#029</span><span class="p-fmt fc">Carrossel</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f029">
+        <button class="arr L hide" id="aL029" onclick="mv('029',-1)">‹</button>
+        <button class="arr R" id="aR029" onclick="mv('029',1)">›</button>
+        <div class="track" id="tr029">
+
+          <div class="slide t-ink">
+            <div class="blob" style="width:320px;height:320px;top:-60px;right:-60px;opacity:.4"></div>
+            <span class="sn">1 / 6</span>
+            <div class="si">
+              <div class="eye">boas práticas · tribunais líderes</div>
+              <div style="flex:1"></div>
+              <div class="hl">O que os<br>tribunais líderes<br>em <em>IA</em> fizeram<br>primeiro.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">2 / 6</span>
+            <div class="si">
+              <div class="eye">passo 01</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,32px)">Mapearam os<br><em>fluxos certos.</em></div>
+              <div class="bd">Identificaram os processos com maior volume e menor valor agregado: triagem, classificação, distribuição. Começaram por onde a IA entrega resultado imediato.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">3 / 6</span>
+            <div class="si">
+              <div class="eye">passo 02</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,32px)">Escolheram<br><em>integração nativa.</em></div>
+              <div class="bd">Não adaptaram ferramentas genéricas. Contrataram solução construída para o fluxo processual do judiciário — com PJe, eProc ou PROJUDI já no escopo.</div>
+              <div class="chips"><span class="chip">PJe</span><span class="chip">eProc</span><span class="chip">PROJUDI</span></div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">4 / 6</span>
+            <div class="si">
+              <div class="eye">passo 03</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,32px)">Definiram<br><em>KPIs antes</em><br>da implantação.</div>
+              <div class="bd">O que medir: tempo de triagem, taxa de erros, volume processado por servidor, conformidade CNJ. Sem meta, não há resultado — só esperança.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">5 / 6</span>
+            <div class="si">
+              <div class="eye">passo 04</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,30px)">Começaram<br>pequeno.<br><em>Validaram. Escalaram.</em></div>
+              <div class="bd">Piloto em uma vara ou seção. Validação com dados reais. Ajustes finos. Depois escala para todo o tribunal. Esse ritmo reduz risco e constrói confiança interna.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-blue">
+            <span class="sn" style="color:rgba(255,255,255,.18)">6 / 6</span>
+            <div class="si">
+              <div class="eye">a nowlex foi construída para esse método</div>
+              <div style="flex:1"></div>
+              <div class="hl" style="font-size:clamp(22px,4vw,36px)">Comece pelo<br>passo certo.<br><em>Agora.</em></div>
+              <div class="cta">nowlex.ai</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="dots" id="dt029">
+          <div class="dot on" onclick="gt('029',0)"></div>
+          <div class="dot" onclick="gt('029',1)"></div>
+          <div class="dot" onclick="gt('029',2)"></div>
+          <div class="dot" onclick="gt('029',3)"></div>
+          <div class="dot" onclick="gt('029',4)"></div>
+          <div class="dot" onclick="gt('029',5)"></div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct029">O que separa os tribunais que avançaram em IA dos que ainda estão na estaca zero?
+
+1 — Mapearam os fluxos com maior volume e menor valor agregado
+2 — Escolheram integração nativa — não adaptações genéricas
+3 — Envolveram TI desde a homologação
+4 — Definiram KPIs antes de implantar
+5 — Começaram pequeno, validaram, escalaram
+
+Esse é o método. A Nowlex foi construída para ele. nowlex.ai</div>
+        <button class="cap-btn" onclick="tc('ct029',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #GovTechBrasil #IAnojudiciário #tribunaisdigitais #inovaçãopública #LegalTechBR</div>
+      </div>
+    </div>
+
+    <!-- #030 STORY ENCERRAMENTO SEMANA 3 -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#030</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">18h</span>
+      </div>
+      <div class="frame" id="f030">
+        <div class="track" id="tr030">
+          <div class="slide t-dark">
+            <div class="blob" style="width:300px;height:300px;bottom:-50px;right:-50px;opacity:.18"></div>
+            <div class="si">
+              <div class="story-c">
+                <div class="eye" style="margin-bottom:0">3 semanas de conteúdo</div>
+                <div class="sq" style="font-size:clamp(18px,3.5vw,26px)">Você já sabe tudo que precisa para tomar a decisão.</div>
+                <div style="font-size:13px;color:rgba(242,242,242,.4);font-weight:500;line-height:1.5">Falta só uma conversa.</div>
+                <div class="btn-pill">nowlex.ai/demo →</div>
+                <div style="font-size:11px;color:rgba(242,242,242,.18)">45 minutos. Técnico. Sem custo.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct030">CTA de encerramento da semana 3. Lead já viu ROI, bastidores, análise semântica e boas práticas. Momento de converter.</div>
+        <div class="cap-tags">#nowlex #IAnojudiciário</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ SÁBADO 28/06 ══ -->
+<div class="day-group" id="d2806">
+  <div class="day-hd">
+    <span class="day-dt">28 JUN · SÁB</span>
+    <span class="day-nm">Sábado</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #031 IMAGEM GLOSSÁRIO IA -->
+    <div class="post-col" data-fmt="i" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#031</span><span class="p-fmt fi">Imagem</span>
+        <span class="p-time">10h</span>
+      </div>
+      <div class="frame" id="f031">
+        <div class="track" id="tr031">
+          <div class="slide t-white">
+            <div class="si" style="padding:26px 30px">
+              <div class="eye" style="margin-bottom:14px">glossário · ia no judiciário</div>
+              <div class="hl" style="color:#1a1a1a;font-size:clamp(16px,3vw,24px);margin-bottom:18px">6 termos que<br>todo gestor<br>precisa conhecer.</div>
+              <div class="cl" style="flex:1;justify-content:center;gap:9px">
+                <div class="ci" style="color:rgba(26,26,26,.75);font-size:11px"><div class="cdot" style="font-size:8px">1</div><div><strong style="color:#1a1a1a">NLP</strong> — Processamento de linguagem natural: a IA lê e entende texto jurídico</div></div>
+                <div class="ci" style="color:rgba(26,26,26,.75);font-size:11px"><div class="cdot" style="font-size:8px">2</div><div><strong style="color:#1a1a1a">Semântica</strong> — entender o significado, não só as palavras</div></div>
+                <div class="ci" style="color:rgba(26,26,26,.75);font-size:11px"><div class="cdot" style="font-size:8px">3</div><div><strong style="color:#1a1a1a">OCR Jurídico</strong> — digitalização inteligente de documentos físicos</div></div>
+                <div class="ci" style="color:rgba(26,26,26,.75);font-size:11px"><div class="cdot" style="font-size:8px">4</div><div><strong style="color:#1a1a1a">Workflow automatizado</strong> — fluxo com decisões parcialmente autônomas</div></div>
+                <div class="ci" style="color:rgba(26,26,26,.75);font-size:11px"><div class="cdot" style="font-size:8px">5</div><div><strong style="color:#1a1a1a">IA Explicável</strong> — cada classificação tem justificativa auditável</div></div>
+                <div class="ci" style="color:rgba(26,26,26,.75);font-size:11px"><div class="cdot" style="font-size:8px">6</div><div><strong style="color:#1a1a1a">On-Premise</strong> — IA dentro da infraestrutura do próprio tribunal</div></div>
+              </div>
+              <div class="wm" style="margin-top:10px">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct031">Para quem ainda está se familiarizando com o vocabulário de IA aplicada ao direito.
+
+NLP · Semântica · OCR Jurídico · Workflow automatizado · IA Explicável · On-Premise
+
+Salve para consultar quando precisar — e compartilhe com quem está avaliando soluções de IA para o tribunal.</div>
+        <button class="cap-btn" onclick="tc('ct031',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #IAnojudiciário #LegalTechBR #direitoetecnologia #GovTechBrasil</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ SEGUNDA 30/06 ══ -->
+<div class="day-group" id="d3006">
+  <div class="day-hd">
+    <span class="day-dt">30 JUN · SEG</span>
+    <span class="day-nm">Segunda-feira — Encerramento de Junho</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #032 IMAGEM REFLEXÃO JUNHO -->
+    <div class="post-col" data-fmt="i" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#032</span><span class="p-fmt fi">Imagem</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f032">
+        <div class="track" id="tr032">
+          <div class="slide t-ink">
+            <div class="blob" style="width:400px;height:400px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.2"></div>
+            <div class="si" style="align-items:center;text-align:center;justify-content:center">
+              <div class="eye" style="text-align:center;margin-bottom:24px">junho 2026 · encerramento</div>
+              <div class="hl" style="font-size:clamp(22px,4.5vw,38px);text-align:center">O maior obstáculo<br>para a IA nos<br>tribunais não é<br><em>tecnologia.</em></div>
+              <div style="width:40px;height:2px;background:rgba(0,107,249,.4);border-radius:2px;margin:20px auto"></div>
+              <div style="font-size:14px;color:rgba(242,242,242,.35);line-height:1.6;max-width:300px">É confiança. E confiança se constrói com resultado.</div>
+              <div class="wm" style="text-align:center;margin-top:32px">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct032">Um mês de conteúdo sobre IA e judiciário — e uma certeza ficou mais clara do que nunca.
+
+O maior obstáculo para a adoção de IA nos tribunais não é tecnologia. É confiança.
+
+Confiança de que a solução vai funcionar no fluxo real. De que os dados estarão seguros. De que haverá suporte quando algo der errado.
+
+É por isso que a Nowlex não vende software. Vende resultado com responsabilidade.
+
+Julho começa amanhã. O que você quer ver por aqui?</div>
+        <button class="cap-btn" onclick="tc('ct032',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #IAnojudiciário #GovTechBrasil #LegalTechBR #reflexão</div>
+      </div>
+    </div>
+
+    <!-- #033 STORY CAIXA DE PERGUNTAS -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#033</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f033">
+        <div class="track" id="tr033">
+          <div class="slide t-blue">
+            <div class="blob" style="width:240px;height:240px;top:-30px;right:-30px;background:rgba(255,255,255,.07);filter:blur(50px)"></div>
+            <div class="si">
+              <div class="story-c">
+                <div class="eye" style="color:rgba(255,255,255,.55);margin-bottom:0">junho encerrado · julho começa</div>
+                <div class="sq" style="color:#fff;font-size:clamp(18px,3.5vw,26px)">Tem dúvida sobre IA no judiciário?</div>
+                <div style="font-size:13px;color:rgba(255,255,255,.65);font-weight:500;line-height:1.5">Manda aqui — respondemos nos próximos stories.</div>
+                <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:14px 18px;width:100%;text-align:left">
+                  <div style="font-size:12px;color:rgba(255,255,255,.4)">Digite sua pergunta...</div>
+                </div>
+                <div style="font-size:11px;color:rgba(255,255,255,.3)">Caixa de perguntas ativa</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct033">Story de caixa de perguntas — ativar a funcionalidade nativa do Instagram. Gera conteúdo para os próximos stories de resposta e mapeia dúvidas reais do público.</div>
+        <div class="cap-tags">#nowlex #IAnojudiciário #GovTechBrasil</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ TERÇA 01/07 ══ -->
+<div class="day-group" id="d0107">
+  <div class="day-hd">
+    <span class="day-dt">01 JUL · TER</span>
+    <span class="day-nm">Terça-feira — Início de Julho</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #034 REELS PRAZO PROCESSUAL -->
+    <div class="post-col" data-fmt="r" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#034</span><span class="p-fmt fr">Reels</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f034">
+        <div class="track" id="tr034">
+          <div class="slide t-dark">
+            <div class="blob" style="width:300px;height:300px;top:-50px;right:-50px;opacity:.35"></div>
+            <div class="si">
+              <div class="eye">funcionalidade · gestão de prazos</div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px">
+                <div class="hl" style="font-size:clamp(18px,3.5vw,28px);margin-bottom:0">Prazos perdidos<br>custam caro.<br>A IA <em>previne.</em></div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:center;gap:10px;background:rgba(255,85,85,.06);border:1px solid rgba(255,85,85,.15);border-radius:7px;padding:10px 14px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#ff5555;flex-shrink:0"></div>
+                    <div style="font-size:11px;color:rgba(242,242,242,.6)">Prazo vencendo em 24h — <strong style="color:#ff9999">3 processos</strong></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;background:rgba(255,180,0,.06);border:1px solid rgba(255,180,0,.15);border-radius:7px;padding:10px 14px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#ffb400;flex-shrink:0"></div>
+                    <div style="font-size:11px;color:rgba(242,242,242,.6)">Prazo em 72h — <strong style="color:#ffd060">12 processos</strong></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;background:rgba(0,200,100,.06);border:1px solid rgba(0,200,100,.15);border-radius:7px;padding:10px 14px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#00c864;flex-shrink:0"></div>
+                    <div style="font-size:11px;color:rgba(242,242,242,.6)">No prazo — <strong style="color:#80e4a8">147 processos</strong></div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:rgba(242,242,242,.3);line-height:1.5">Sem planilha. Sem post-it. Sem surpresa na segunda-feira.</div>
+              </div>
+              <div class="wm" style="margin-top:14px">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct034">Prazos perdidos custam caro no judiciário — em recursos, em reputação, em trabalho extra.
+
+A Nowlex mapeia automaticamente os prazos de cada processo e alerta a equipe com antecedência configurável.
+
+Sem planilha. Sem post-it. Sem surpresa na segunda-feira.</div>
+        <button class="cap-btn" onclick="tc('ct034',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #IAnojudiciário #GovTechBrasil #PJe #processoeletronico #LegalTechBR</div>
+      </div>
+    </div>
+
+    <!-- #035 STORY RESPOSTAS CAIXA PERGUNTAS -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#035</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f035">
+        <div class="track" id="tr035">
+          <div class="slide t-dark">
+            <div class="blob" style="width:220px;height:220px;top:20%;left:-40px;opacity:.14"></div>
+            <div class="si" style="padding:28px 30px">
+              <div class="eye" style="margin-bottom:14px">respondendo vocês</div>
+              <div class="qt">
+                <div style="font-size:10px;font-weight:700;color:rgba(0,107,249,.6);letter-spacing:1px;margin-bottom:6px">PERGUNTA</div>
+                <div class="qt-text" style="font-size:12px">"A IA da Nowlex funciona com processos físicos digitalizados?"</div>
+              </div>
+              <div style="font-size:13px;font-weight:600;color:rgba(242,242,242,.8);margin-bottom:10px">Sim — com OCR jurídico.</div>
+              <div style="font-size:12px;color:rgba(242,242,242,.5);line-height:1.6;flex:1">A Nowlex processa documentos digitalizados via OCR com validação semântica. O sistema reconhece caligrafia padronizada de cartórios e adapta a extração ao padrão do tribunal.</div>
+              <div style="font-size:11px;color:rgba(242,242,242,.25);margin-top:auto">Mais perguntas → DM nowlex.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct035">Série de stories respondendo perguntas enviadas pelos seguidores. Adaptar com as perguntas reais recebidas na caixa do story #033. Alto engajamento orgânico.</div>
+        <div class="cap-tags">#nowlex #IAnojudiciário #GovTechBrasil</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ QUARTA 02/07 ══ -->
+<div class="day-group" id="d0207">
+  <div class="day-hd">
+    <span class="day-dt">02 JUL · QUA</span>
+    <span class="day-nm">Quarta-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #036 CARROSSEL CNJ 332 -->
+    <div class="post-col" data-fmt="c" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#036</span><span class="p-fmt fc">Carrossel</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f036">
+        <button class="arr L hide" id="aL036" onclick="mv('036',-1)">‹</button>
+        <button class="arr R" id="aR036" onclick="mv('036',1)">›</button>
+        <div class="track" id="tr036">
+
+          <div class="slide t-dark">
+            <div class="blob" style="width:300px;height:300px;top:-50px;right:-50px;opacity:.35"></div>
+            <span class="sn">1 / 5</span>
+            <div class="si">
+              <div class="eye">resolução cnj 332/2020</div>
+              <div style="flex:1"></div>
+              <div class="hl" style="font-size:clamp(20px,4vw,34px)">A bússola da<br><em>IA</em> no<br>judiciário<br>brasileiro.</div>
+              <div class="bd" style="font-size:12px;margin-bottom:0">4 princípios. 1 resolução. O que todo gestor precisa saber.</div>
+              <div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">2 / 5</span>
+            <div class="si">
+              <div class="eye">princípio 01 · transparência</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,32px)"><em>Transparência</em></div>
+              <div class="bd">O cidadão tem direito de saber que a IA foi usada no processamento do seu processo. Nenhuma decisão pode ser atribuída à máquina sem comunicação clara.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">3 / 5</span>
+            <div class="si">
+              <div class="eye">princípio 02 · não discriminação</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,30px)">Sem <em>viés</em><br>algorítmico.</div>
+              <div class="bd">A IA não pode reproduzir discriminações históricas dos dados de treinamento. Monitoramento contínuo de viés é obrigação, não diferencial.</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-dark">
+            <span class="sn">4 / 5</span>
+            <div class="si">
+              <div class="eye">princípio 03 e 04</div>
+              <div style="flex:1"></div>
+              <div class="rule"></div>
+              <div class="hl" style="font-size:clamp(20px,3.8vw,30px)"><em>Auditabilidade</em><br>+ Decisão<br>humana.</div>
+              <div class="bd">Cada ação da IA é rastreável. E a decisão final sempre é do magistrado — a IA subsidia, jamais substitui o juízo humano.</div>
+              <div class="chip" style="align-self:flex-start">Res. CNJ 332/2020</div>
+              <div class="wm" style="margin-top:auto">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+          <div class="slide t-blue">
+            <span class="sn" style="color:rgba(255,255,255,.18)">5 / 5</span>
+            <div class="si">
+              <div class="eye">nowlex — conformidade como base</div>
+              <div style="flex:1"></div>
+              <div class="hl" style="font-size:clamp(22px,4vw,36px)">Construída com<br>os 4 princípios<br><em>como requisito.</em></div>
+              <div class="bd" style="color:rgba(255,255,255,.7)">Não como afterthought. Não como marketing. Como arquitetura.</div>
+              <div class="cta">nowlex.ai</div>
+              <div class="wm">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="dots" id="dt036">
+          <div class="dot on" onclick="gt('036',0)"></div>
+          <div class="dot" onclick="gt('036',1)"></div>
+          <div class="dot" onclick="gt('036',2)"></div>
+          <div class="dot" onclick="gt('036',3)"></div>
+          <div class="dot" onclick="gt('036',4)"></div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct036">A Resolução CNJ 332/2020 estabeleceu os princípios para uso de IA no judiciário brasileiro. Quatro anos depois, ela continua sendo a bússola de qualquer solução séria.
+
+Transparência · Não discriminação · Auditabilidade · Responsabilidade humana
+
+A Nowlex foi construída com esses quatro princípios como requisitos — não como opcionais. Salve e encaminhe para o departamento jurídico do seu tribunal.</div>
+        <button class="cap-btn" onclick="tc('ct036',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #CNJdigital #IAnojudiciário #GovTechBrasil #LGPD #tribunaisdigitais</div>
+      </div>
+    </div>
+
+    <!-- #037 STORY CURIOSIDADE CNJ -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#037</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f037">
+        <div class="track" id="tr037">
+          <div class="slide t-dark">
+            <div class="blob" style="width:240px;height:240px;top:30%;right:-50px;opacity:.16"></div>
+            <div class="si">
+              <div class="story-c">
+                <div class="eye" style="margin-bottom:0">curiosidade · relatório cnj</div>
+                <div class="sq" style="font-size:clamp(17px,3.2vw,23px)">Você sabia que o CNJ publica relatório anual sobre uso de IA nos tribunais?</div>
+                <div style="font-size:13px;color:rgba(242,242,242,.45);font-weight:500;line-height:1.5">Sabe em qual posição o seu tribunal aparece?</div>
+                <div class="btn-pill" style="background:var(--blue)">Ver relatório na bio →</div>
+                <div style="font-size:11px;color:rgba(242,242,242,.2)">Atualizado anualmente pelo CNJ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct037">Story de curiosidade institucional. Adicionar na bio o link para o relatório mais recente do CNJ sobre IA nos tribunais. Gera engajamento e autoavaliação do seguidor.</div>
+        <div class="cap-tags">#CNJdigital #nowlex #IAnojudiciário #GovTechBrasil</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ QUINTA 03/07 ══ -->
+<div class="day-group" id="d0307">
+  <div class="day-hd">
+    <span class="day-dt">03 JUL · QUI</span>
+    <span class="day-nm">Quinta-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #038 REELS PROCESSO SIGILOSO -->
+    <div class="post-col" data-fmt="r" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#038</span><span class="p-fmt fr">Reels</span>
+        <span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f038">
+        <div class="track" id="tr038">
+          <div class="slide t-mid">
+            <div class="blob" style="width:280px;height:280px;top:-50px;left:-50px;opacity:.28"></div>
+            <div class="si">
+              <div class="eye">segurança · processos sigilosos</div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px">
+                <div class="hl" style="font-size:clamp(18px,3.5vw,28px);margin-bottom:0">Processos em<br>segredo de Justiça.<br>A IA respeita<br><em>isso.</em></div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="background:rgba(0,107,249,.08);border:1px solid rgba(0,107,249,.2);border-radius:7px;padding:12px 14px">
+                    <div style="font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">controle de acesso granular</div>
+                    <div style="font-size:11px;color:rgba(242,242,242,.55)">A IA analisa somente o que tem permissão para analisar. Nada além disso.</div>
+                  </div>
+                  <div style="background:rgba(0,107,249,.08);border:1px solid rgba(0,107,249,.2);border-radius:7px;padding:12px 14px">
+                    <div style="font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">criptografia ponta a ponta</div>
+                    <div style="font-size:11px;color:rgba(242,242,242,.55)">Em trânsito e em repouso. Logs de auditoria por usuário.</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:rgba(242,242,242,.3)">Conformidade não é uma funcionalidade extra. É a base. nowlex.ai</div>
+              </div>
+              <div class="wm" style="margin-top:14px">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct038">Processos em segredo de Justiça têm regras específicas. A IA precisa respeitar isso — e a Nowlex foi construída para isso.
+
+Controle de acesso granular, logs de auditoria por usuário e criptografia em trânsito e em repouso.
+
+Conformidade não é uma funcionalidade extra. É a base.</div>
+        <button class="cap-btn" onclick="tc('ct038',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #LGPD #CNJdigital #IAnojudiciário #GovTechBrasil #segurança</div>
+      </div>
+    </div>
+
+    <!-- #039 STORY LEITURA SEMANA 2 -->
+    <div class="post-col" data-fmt="s" data-boost="0">
+      <div class="post-meta">
+        <span class="p-num">#039</span><span class="p-fmt fs">Story</span>
+        <span class="p-time">12h15</span>
+      </div>
+      <div class="frame" id="f039">
+        <div class="track" id="tr039">
+          <div class="slide t-blue">
+            <div class="blob" style="width:200px;height:200px;bottom:-20px;right:-20px;background:rgba(255,255,255,.07);filter:blur(40px)"></div>
+            <div class="si">
+              <div class="story-c">
+                <div class="eye" style="color:rgba(255,255,255,.55);margin-bottom:0">leitura recomendada</div>
+                <div class="sq" style="color:#fff;font-size:clamp(16px,3vw,21px)">"Segurança de dados em soluções de IA para o setor público"</div>
+                <div style="font-size:12px;color:rgba(255,255,255,.6);font-weight:500;line-height:1.5">Para gestores de TI que precisam de argumentos técnicos sólidos.</div>
+                <div style="font-size:30px">☝️</div>
+                <div class="btn-pill">Leia na bio →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct039">Story direcionando para conteúdo técnico sobre segurança — complementa o Reels #038. Adaptar título ao artigo mais recente em nowlex.ai.</div>
+        <div class="cap-tags">#nowlex #LGPD #GovTechBrasil #IAnojudiciário</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ SEXTA 04/07 ══ -->
+<div class="day-group" id="d0407">
+  <div class="day-hd">
+    <span class="day-dt">04 JUL · SEX</span>
+    <span class="day-nm">Sexta-feira</span>
+  </div>
+  <div class="post-row">
+
+    <!-- #040 IMAGEM CTA MAPA TRIBUNAIS -->
+    <div class="post-col" data-fmt="i" data-boost="1">
+      <div class="post-meta">
+        <span class="p-num">#040</span><span class="p-fmt fi">Imagem</span>
+        <span class="p-turb">🚀 Turbinar</span><span class="p-time">7h30</span>
+      </div>
+      <div class="frame" id="f040">
+        <div class="track" id="tr040">
+          <div class="slide t-ink">
+            <div class="blob" style="width:420px;height:420px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.17"></div>
+            <div class="si" style="align-items:center;text-align:center;justify-content:center;gap:0">
+              <div class="eye" style="text-align:center;margin-bottom:20px">mapa da inovação judicial</div>
+              <div class="hl" style="text-align:center;font-size:clamp(24px,4.5vw,40px)">Qual cor vai ter<br>o seu <em>estado?</em></div>
+              <div style="width:40px;height:2px;background:rgba(0,107,249,.4);border-radius:2px;margin:20px auto"></div>
+              <div style="display:flex;gap:16px;justify-content:center;margin-bottom:20px">
+                <div style="text-align:center">
+                  <div style="width:32px;height:32px;border-radius:50%;background:var(--blue);margin:0 auto 6px"></div>
+                  <div style="font-size:10px;color:rgba(242,242,242,.35)">IA ativa</div>
+                </div>
+                <div style="text-align:center">
+                  <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,107,249,.3);margin:0 auto 6px"></div>
+                  <div style="font-size:10px;color:rgba(242,242,242,.35)">em implantação</div>
+                </div>
+                <div style="text-align:center">
+                  <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);margin:0 auto 6px"></div>
+                  <div style="font-size:10px;color:rgba(242,242,242,.35)">sem IA ainda</div>
+                </div>
+              </div>
+              <div style="font-size:13px;color:rgba(242,242,242,.35);line-height:1.5;max-width:280px">O mapa está sendo desenhado agora. A Nowlex atua em múltiplos estados.</div>
+              <div class="wm" style="margin-top:28px;text-align:center">now<em>lex</em>.ai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="caption">
+        <div class="cap-text" id="ct040">O mapa da inovação judicial no Brasil está sendo desenhado agora. Qual cor vai ter o seu estado?
+
+A Nowlex atua em múltiplos estados com integração nativa. Onde está o seu tribunal nesse mapa?
+
+Encerramento da primeira quinzena de julho — semana que vem tem novidade.</div>
+        <button class="cap-btn" onclick="tc('ct040',this)">Ver legenda ↓</button>
+        <div class="cap-tags">#nowlex #CNJdigital #GovTechBrasil #IAnojudiciário #tribunaisdigitais #inovaçãopública</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+const S={};
+function init(id){if(!S[id])S[id]=0}
+function mv(id,d){
+  init(id);
+  const t=document.getElementById('tr'+id);
+  const n=t.children.length;
+  S[id]=Math.max(0,Math.min(n-1,S[id]+d));
+  render(id,n);
+}
+function gt(id,i){
+  init(id);
+  const t=document.getElementById('tr'+id);
+  S[id]=i;render(id,t.children.length);
+}
+function render(id,n){
+  const c=S[id];
+  document.getElementById('tr'+id).style.transform='translateX(-'+c*100+'%)';
+  const al=document.getElementById('aL'+id);
+  const ar=document.getElementById('aR'+id);
+  if(al)al.classList.toggle('hide',c===0);
+  if(ar)ar.classList.toggle('hide',c===n-1);
+  const dt=document.getElementById('dt'+id);
+  if(dt)[...dt.children].forEach((d,i)=>d.classList.toggle('on',i===c));
+}
+document.querySelectorAll('.frame').forEach(f=>{
+  let sx=0;
+  const id=f.id.replace('f','');
+  const t=document.getElementById('tr'+id);
+  if(!t||t.children.length<=1)return;
+  f.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+  f.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)mv(id,dx<0?1:-1)});
+  f.addEventListener('mousedown',e=>{sx=e.clientX});
+  f.addEventListener('mouseup',e=>{const dx=e.clientX-sx;if(Math.abs(dx)>40)mv(id,dx<0?1:-1)});
+});
+function tc(id,btn){
+  const el=document.getElementById(id);
+  const open=el.classList.toggle('open');
+  btn.textContent=open?'Recolher ↑':'Ver legenda ↓';
+}
+function filt(type,btn){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.post-col').forEach(p=>{
+    if(type==='all'){p.style.display='';return}
+    if(type==='turb'){p.style.display=p.dataset.boost==='1'?'':'none';return}
+    p.style.display=p.dataset.fmt===type?'':'none';
+  });
+  document.querySelectorAll('.day-group').forEach(g=>{
+    const vis=[...g.querySelectorAll('.post-col')].some(p=>p.style.display!=='none');
+    g.style.display=vis?'':'none';
+  });
+}
+</script>
+</body>
+</html>
